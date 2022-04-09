@@ -3,5 +3,6 @@
     <dimen name="toolbar_textSize">20sp</dimen>
     <dimen name="toolbar_editText_margin">32dp</dimen>
     <dimen name="toolbar_padding">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 
 </resources>

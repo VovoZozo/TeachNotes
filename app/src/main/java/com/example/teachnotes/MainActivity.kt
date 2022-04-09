@@ -14,6 +14,9 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .add(R.id.bottom_bar_container, MainBottomBarFragment())
                 .commit()
+            supportFragmentManager.beginTransaction()
+                .add(R.id.notes_container, NotesListFragment())
+                .commit()
         }
 
     }
