@@ -22,16 +22,16 @@
             android:id="@+id/toolbar_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/toolbar_editText_margin"
-            android:textSize="@dimen/toolbar_textSize"
-            android:textColor="@color/white"
-            android:singleLine="true"
             android:layout_alignStart="@id/toolbar_left_icon"
             android:layout_alignEnd="@id/toolbar_menu_icon"
+            android:layout_marginStart="@dimen/toolbar_editText_margin"
             android:layout_marginEnd="@dimen/toolbar_editText_margin"
             android:hint="@string/toolbar_hint_search"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColor="@color/white"
             android:textColorHint="@color/material_on_primary_emphasis_high_type"
-            android:inputType="text" />
+            android:textSize="@dimen/toolbar_textSize" />
 
         <ImageView
             android:id="@+id/toolbar_menu_icon"
@@ -41,6 +41,5 @@
             android:layout_centerVertical="true"
             android:src="@drawable/ic_baseline_menu_open_24" />
     </RelativeLayout>
-
 
 </RelativeLayout>

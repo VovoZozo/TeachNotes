@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/layout_bottom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/toolbar_padding"
         android:layout_alignParentBottom="true"
         android:background="@color/black"
+        android:backgroundTint="@color/black"
         android:gravity="center"
         android:orientation="horizontal"
-        android:backgroundTint="@color/black">
+        android:padding="@dimen/toolbar_padding">
 
         <ImageView
             android:id="@+id/toolbar_left_icon"

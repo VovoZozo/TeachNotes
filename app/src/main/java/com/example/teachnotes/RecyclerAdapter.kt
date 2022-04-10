@@ -6,59 +6,29 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+class RecyclerAdapter(
+    private val notes: List<Note>
+) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
-    private val noteTitlePreview = arrayOf(
-        "d116df5",
-        "36ffc75", "f5cfe78", "5b87628",
-        "db8d14e", "9913dc4", "e120f96",
-        "466251b"
-    )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.note_card_view, parent, false)
+        return ViewHolder(view)
+    }
 
-    private val noteTextPreview = arrayOf(
-        "Kekshgsf", "Tsfhsfgh",
-        "Keluarga", "Bisnis",
-        "Keluarga", "Hutang",
-        "Teknologi", "Pidana"
-    )
-
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val itemsViewModel = notes[position]
+        holder.itemPreviewNoteTitle.text = itemsViewModel.noteTitle
+        holder.itemPreviewNoteText.text = itemsViewModel.noteText
+    }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        var itemPreviewNoteTitle: TextView
-        var itemPreviewNoteText: TextView
-
-        init {
-            itemPreviewNoteTitle = itemView.findViewById(R.id.previewNoteTitle)
-            itemPreviewNoteText = itemView.findViewById(R.id.previewNoteText)
-
-//            itemView.setOnClickListener {
-//                var position: Int = getAdapterPosition()
-//                val context = itemView.context
-//                val intent = Intent(context, DetailPertanyaan::class.java).apply {
-//                    putExtra("NUMBER", position)
-//                    putExtra("CODE", itemPreviewNoteTitle.text)
-//                    putExtra("CATEGORY", itemPreviewNoteText.text)
-//                }
-//                context.startActivity(intent)
-//            }
-        }
-    }
-
-    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
-        val v = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.note_card_view, viewGroup, false)
-        return ViewHolder(v)
-    }
-
-    override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
-        viewHolder.itemPreviewNoteTitle.text = noteTitlePreview[i]
-        viewHolder.itemPreviewNoteText.text = noteTextPreview[i]
-
+        var itemPreviewNoteTitle: TextView = itemView.findViewById(R.id.previewNoteTitle)
+        var itemPreviewNoteText: TextView = itemView.findViewById(R.id.previewNoteText)
     }
 
     override fun getItemCount(): Int {
-        return noteTitlePreview.size
+        return notes.size
     }
 }
 
