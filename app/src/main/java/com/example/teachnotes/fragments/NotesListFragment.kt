@@ -11,6 +11,7 @@ import com.example.teachnotes.R
 import com.example.teachnotes.adapters.NotesRecyclerAdapter
 import com.example.teachnotes.databases.NoteRepository
 import com.example.teachnotes.databinding.FragmentNotesListBinding
+import com.example.teachnotes.models.Note
 
 
 class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
@@ -56,22 +57,41 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 val searchView = itemView.findViewById<SearchView>(R.id.searchView)
                 searchView.clearFocus()
-                binding.recyclerView.adapter =
-                    NotesRecyclerAdapter(notes.filter { it.noteTitle.contains(query!!) })
+                if (query != null) {
+                    val searchNotes = notes.filter {
+                        it.noteTitle.lowercase().contains(query.lowercase())
+                    }
+                    if (searchNotes.isNotEmpty()) {
+                        binding.recyclerView.adapter =
+                            NotesRecyclerAdapter(searchNotes)
+                    } else binding.recyclerView.adapter =
+                        NotesRecyclerAdapter(NOTE_NOT_FOUND)
+                }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                binding.recyclerView.adapter =
-                    NotesRecyclerAdapter(notes.filter { it.noteTitle.contains(newText!!) })
+                if (newText != null) {
+                    val searchNotes = notes.filter {
+                        it.noteTitle.lowercase().contains(newText.lowercase())
+                    }
+                    if (searchNotes.isNotEmpty()) {
+                        binding.recyclerView.adapter =
+                            NotesRecyclerAdapter(searchNotes)
+                    } else binding.recyclerView.adapter =
+                        NotesRecyclerAdapter(NOTE_NOT_FOUND)
+                }
                 return false
             }
-
         })
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         this._binding = null
+    }
+
+    companion object {
+        private val NOTE_NOT_FOUND = listOf<Note>(Note("Not", "Found"))
     }
 }
