@@ -1,14 +1,16 @@
-package com.example.teachnotes
+package com.example.teachnotes.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.teachnotes.R
+import com.example.teachnotes.models.Note
 
-class RecyclerAdapter(
+class NotesRecyclerAdapter(
     private val notes: List<Note>
-) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<NotesRecyclerAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -30,5 +32,6 @@ class RecyclerAdapter(
     override fun getItemCount(): Int {
         return notes.size
     }
+
 }
 

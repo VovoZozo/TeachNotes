@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/create_note_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/save_new_note_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@string/save_new_note"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_baseline_add_task_24" />
+
+    <TextView
+        android:id="@+id/show_note_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="skfk/nlsgfkhlfgkhfglhkjxcvbxvbcvbvbxlfgkhj"
+        android:layout_margin="16dp"
+        android:gravity="top|start"
+        android:queryBackground="@android:color/transparent" />
+
+    <EditText
+        android:id="@+id/edit_note_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="dfhslgjdhflkjshdkfk"
+        android:layout_margin="16dp"
+        android:gravity="top|start"
+        android:visibility="gone"
+        android:queryBackground="@android:color/transparent" />
+
+
+</RelativeLayout>

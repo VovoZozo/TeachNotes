@@ -93,4 +93,8 @@
     <string name="note">note</string>
     <string name="noteTitle">Title</string>
     <string name="previewNoteText">note_preview</string>
+    <string name="add_new_note">add new note</string>
+    <string name="menu">menu</string>
+    <string name="add_new_todo" />
+    <string name="save_new_note">save_new_note</string>
 </resources>

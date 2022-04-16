@@ -1,17 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.NotesListFragment">
+    tools:context=".fragments.TodosFragment">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/main_notes_layout"
+            android:id="@+id/main_todo_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -55,30 +54,16 @@
 
             </com.google.android.material.appbar.AppBarLayout>
 
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                android:queryHint="search note"
-                android:iconifiedByDefault="false"
-                android:queryBackground="@android:color/transparent"
-                android:background="@drawable/search_view_background"
-                app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+                android:id="@+id/todos_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/searchView"
-                tools:listitem="@layout/note_card_view" />
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+                tools:listitem="@layout/todo_card_view" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/add_note_item_fab"
+                android:id="@+id/add_todo_item_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
@@ -86,7 +71,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/main_bottom_toolbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_baseline_add_circle_outline_24"
-                android:contentDescription="@string/add_new_note" />
+                android:contentDescription="@string/add_new_todo" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -98,7 +83,7 @@
                 android:gravity="bottom"
                 android:orientation="horizontal"
                 android:padding="@dimen/toolbar_padding"
-                app:layout_constraintBottom_toBottomOf="@+id/main_notes_layout"
+                app:layout_constraintBottom_toBottomOf="@+id/main_todo_layout"
                 tools:layout_editor_absoluteX="-16dp">
 
                 <ImageView
