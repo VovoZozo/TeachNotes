@@ -1,24 +1,41 @@
 package com.example.teachnotes.databases
 
-import com.example.teachnotes.models.Note
-import com.github.javafaker.Faker
+class NoteRepository(private val dao: NoteDAO) {
 
-object NoteRepository {
-    private val noteFaker = Faker()
-    var notes = mutableListOf<Note>()
+    val notes = dao.getAllNotes()
 
-    init {
-        repeat(3) {
-            addRandomNote()
-        }
+    suspend fun insert(note: Note) {
+        dao.insertNote(note)
     }
 
-    private fun addRandomNote() {
-        notes.add(createRandomNote())
+    suspend fun update(note: Note) {
+        dao.updateNote(note)
     }
 
-    private fun createRandomNote() = Note(
-        noteFaker.harryPotter().character(),
-        noteFaker.harryPotter().quote()
-    )
+    suspend fun delete(note: Note) {
+        dao.deleteNote(note)
+    }
+
+    suspend fun deleteAllNotes() {
+        dao.deleteAllNotes()
+    }
+
+
+//    private val noteFaker = Faker()
+//    var notes = mutableListOf<Note>()
+//
+//    init {
+//        repeat(3) {
+//            addRandomNote()
+//        }
+//    }
+//
+//    private fun addRandomNote() {
+//        notes.add(createRandomNote())
+//    }
+//
+//    private fun createRandomNote() = Note(
+//        noteFaker.harryPotter().character(),
+//        noteFaker.harryPotter().quote()
+//    )
 }

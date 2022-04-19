@@ -1,59 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.NotesListFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <data>
+
+        <variable
+            name="myViewModel"
+            type="com.example.teachnotes.models.NoteViewModel" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".fragments.NotesListFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/main_notes_layout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/appBarLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <androidx.appcompat.widget.Toolbar
-                        android:id="@+id/main_toolbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/black"
-                        android:minHeight="?attr/actionBarSize"
-                        android:theme="?attr/actionBarTheme"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:title="TeachNotes"
-                        app:titleTextColor="@color/white" />
-
-                    <ImageView
-                        android:id="@+id/settings_imageView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:src="@drawable/ic_baseline_menu_open_24"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:contentDescription="@string/menu" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <SearchView
                 android:id="@+id/searchView"
@@ -70,63 +36,58 @@
                 android:background="@drawable/search_view_background"
                 app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/searchView"
+                android:layout_marginBottom="50dp"
                 tools:listitem="@layout/note_card_view" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/main_bottom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/black"
+            android:backgroundTint="@color/black"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/toolbar_padding">
+
+            <ImageView
+                android:id="@+id/notes_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="75dp"
+                android:src="@drawable/ic_baseline_note_add_24" />
+
+            <ImageView
+                android:id="@+id/todos_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="75dp"
+                android:src="@drawable/ic_baseline_add_task_24" />
+
+        </LinearLayout>
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/add_note_item_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
                 android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
-                app:layout_constraintBottom_toTopOf="@+id/main_bottom_toolbar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_baseline_add_circle_outline_24"
-                android:contentDescription="@string/add_new_note" />
+                android:layout_marginBottom="75dp"
+                android:contentDescription="@string/add_new_note"
+                app:srcCompat="@drawable/ic_baseline_add_circle_outline_24" />
 
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/main_bottom_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/black"
-                android:backgroundTint="@color/black"
-                android:gravity="bottom"
-                android:orientation="horizontal"
-                android:padding="@dimen/toolbar_padding"
-                app:layout_constraintBottom_toBottomOf="@+id/main_notes_layout"
-                tools:layout_editor_absoluteX="-16dp">
+    </FrameLayout>
+</layout>
 
-                <ImageView
-                    android:id="@+id/notes_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_baseline_note_add_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/todos_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_baseline_add_task_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-</FrameLayout>
