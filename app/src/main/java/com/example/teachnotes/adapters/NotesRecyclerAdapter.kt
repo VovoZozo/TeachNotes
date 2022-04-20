@@ -34,8 +34,8 @@ class NotesRecyclerAdapter(
         init {
             binding.root.setOnClickListener {
                 if (absoluteAdapterPosition != RecyclerView.NO_POSITION) {
-                    val user = getItem(absoluteAdapterPosition)
-                    clickListener.onUserClicked(user)
+                    val note = getItem(absoluteAdapterPosition)
+                    clickListener.onUserClicked(note)
                 }
             }
         }

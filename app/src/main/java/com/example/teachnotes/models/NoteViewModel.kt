@@ -41,7 +41,6 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
         } else {
             clearAll()
         }
-
     }
 
     fun sortedByInputTextListNotes(query: String): List<Note> {
@@ -52,7 +51,6 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
                 it.noteTitle.lowercase().contains(query.lowercase())
             }
         }
-
     }
 
     private fun insert(note: Note) {
@@ -61,30 +59,29 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
         }
     }
 
-    fun update(note: Note) = viewModelScope.launch {
+    private fun update(note: Note) = viewModelScope.launch {
         repository.update(note)
         inputTitle.value = noteToUpdateOrDelete.noteTitle
-        inputText.value = null
+        inputText.value = noteToUpdateOrDelete.noteText
         isUpdateOrDelete = false
     }
 
-    fun delete(note: Note) = viewModelScope.launch {
+    private fun delete(note: Note) = viewModelScope.launch {
         repository.delete(note)
         inputTitle.value = null
         inputText.value = null
         isUpdateOrDelete = false
     }
 
-    fun clearAll() = viewModelScope.launch {
+    private fun clearAll() = viewModelScope.launch {
         repository.deleteAllNotes()
     }
 
-    fun initUpdateAndDelete(note: Note) {
-        inputTitle.value = note.noteTitle
-        inputText.value = note.noteText
+    fun initUpdateAndDelete(id: Int, title: String, text: String) {
+        inputTitle.value = title
+        inputText.value = text
         isUpdateOrDelete = true
-        noteToUpdateOrDelete = note
-
+        noteToUpdateOrDelete = Note(id, title, text, false)
     }
 
 

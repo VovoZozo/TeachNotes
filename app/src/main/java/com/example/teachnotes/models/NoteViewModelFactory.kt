@@ -10,6 +10,10 @@ class NoteViewModelFactory(private val repository: NoteRepository) : ViewModelPr
         if (modelClass.isAssignableFrom(NoteViewModel::class.java)) {
             return NoteViewModel(repository) as T
         }
-        throw IllegalArgumentException("Unknown View Model class")
+        throw IllegalArgumentException(NOTE_FACTORY_EXCEPTION)
+    }
+
+    companion object {
+        private const val NOTE_FACTORY_EXCEPTION = "Unknown View Model class"
     }
 }

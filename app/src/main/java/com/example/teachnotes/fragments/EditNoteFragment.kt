@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.teachnotes.R
+import com.example.teachnotes.databases.Note
 import com.example.teachnotes.databases.NoteDatabase
 import com.example.teachnotes.databases.NoteRepository
 import com.example.teachnotes.databinding.FragmentEditNoteBinding
@@ -37,33 +38,30 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note) {
         noteViewModel = ViewModelProvider(this, factory)[NoteViewModel::class.java]
         binding.myViewModel = noteViewModel
         binding.lifecycleOwner = this
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val text = arguments?.getString(ARGUMENT_TEXT) ?: "Unknown"
-        val title = arguments?.getString(ARGUMENT_TITLE) ?: "Unknown"
-
-        binding.noteTitle.setText(title)
-        binding.noteText.setText(text)
+        val id = arguments?.getInt(ARGUMENT_ID) ?: 0
+        val title = arguments?.getString(ARGUMENT_TITLE) ?: "0"
+        val text = arguments?.getString(ARGUMENT_TEXT) ?: "0"
+        noteViewModel.initUpdateAndDelete(id, title, text)
         setHasOptionsMenu(true)
-
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Edit Note"
     }
 
     companion object {
+        private const val ARGUMENT_ID = "ARGUMENT_ID"
         private const val ARGUMENT_TITLE = "ARGUMENT_TITLE"
         private const val ARGUMENT_TEXT = "ARGUMENT_TEXT"
 
-        fun newInstance(text: String, title: String): EditNoteFragment {
+        fun newInstance(note: Note): EditNoteFragment {
             val args = Bundle().apply {
-                putString(ARGUMENT_TEXT, text)
-                putString(ARGUMENT_TITLE, title)
+                putInt(ARGUMENT_ID, note.noteId)
+                putString(ARGUMENT_TITLE, note.noteTitle)
+                putString(ARGUMENT_TEXT, note.noteText)
             }
-
             val fragment = EditNoteFragment()
             fragment.arguments = args
             return fragment

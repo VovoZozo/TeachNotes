@@ -8,7 +8,7 @@ object TodosRepository {
     var todos = mutableListOf<Todo>()
 
     init {
-        repeat(100) {
+        repeat(20) {
             addRandomTodo()
         }
     }

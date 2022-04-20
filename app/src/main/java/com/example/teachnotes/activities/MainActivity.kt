@@ -1,7 +1,6 @@
 package com.example.teachnotes.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teachnotes.R
 import com.example.teachnotes.databases.Note
@@ -20,22 +19,17 @@ class MainActivity : AppCompatActivity(), Navigator {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val manager = supportFragmentManager
+        val transaction = manager.beginTransaction()
 
-        //setSupportActionBar(findViewById(R.id.main_toolbar))
-
-        var manager = supportFragmentManager
-        var transaction = manager.beginTransaction()
         if (savedInstanceState == null) {
             transaction.add(R.id.notes_container, NotesListFragment())
             transaction.commit()
         }
 
         supportFragmentManager.addOnBackStackChangedListener {
-
             supportActionBar?.setDisplayHomeAsUpEnabled(canNavigateUp)
-
         }
-
     }
 
 
@@ -50,16 +44,12 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun navigateToEditNoteScreen(note: Note) {
-        Log.i("Nav", note.toString())
         supportFragmentManager
             .beginTransaction()
             .replace(
-                R.id.notes_container, EditNoteFragment.newInstance(
-                    note.noteText,
-                    note.noteTitle
-                ), "Edit note"
+                R.id.notes_container, EditNoteFragment.newInstance(note), null
             )
-            .addToBackStack("Edit note")
+            .addToBackStack(null)
             .commit()
     }
 
@@ -82,6 +72,14 @@ class MainActivity : AppCompatActivity(), Navigator {
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.notes_container, SettingsFragment(), null)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun navigateToTodosScreen() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.notes_container, TodosFragment())
             .addToBackStack(null)
             .commit()
     }

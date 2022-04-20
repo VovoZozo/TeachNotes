@@ -8,6 +8,7 @@ interface Navigator {
     fun navigateToCreateNoteScreen()
     fun navigateToNotesListScreenFromBackStack()
     fun navigateToSettingsScreen()
+    fun navigateToTodosScreen()
 }
 
 fun Fragment.navigator(): Navigator = (requireActivity() as Navigator)

@@ -2,15 +2,12 @@ package com.example.teachnotes.fragments
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teachnotes.R
@@ -21,7 +18,6 @@ import com.example.teachnotes.databases.NoteRepository
 import com.example.teachnotes.databinding.FragmentNotesListBinding
 import com.example.teachnotes.models.NoteViewModel
 import com.example.teachnotes.models.NoteViewModelFactory
-
 
 class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
 
@@ -58,7 +54,6 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = NotesRecyclerAdapter(object : NotesRecyclerAdapter.NoteClickListener {
             override fun onUserClicked(note: Note) {
-                noteViewModel.initUpdateAndDelete(note)
                 navigator().navigateToEditNoteScreen(note)
             }
         })
@@ -67,16 +62,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
     }
 
     private fun displayNotesList() {
-        noteViewModel.notes.observe(viewLifecycleOwner, Observer { list ->
-            adapter.setData(list)
-        })
-    }
-
-    private fun listItemClicked(note: Note) {
-        noteViewModel.initUpdateAndDelete(note)
-        Toast.makeText(
-            this.context, "selected title is ${note.noteTitle}", Toast.LENGTH_LONG
-        ).show()
+        noteViewModel.notes.observe(viewLifecycleOwner) { adapter.setData(it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -97,23 +83,18 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(itemView, savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.apply {
-            this.title = "Notes Recycler"
+            this.title = getString(R.string.notes_list_fragment_toolbar_title)
             this.setBackgroundDrawable(
                 ColorDrawable(ContextCompat.getColor(requireContext(), R.color.black))
             )
         }
-        binding.todosIcon.setOnClickListener {
-            parentFragmentManager
-                .beginTransaction()
-                .replace(R.id.notes_container, TodosFragment())
-                .addToBackStack("todos")
-                .commit()
-        }
 
+        binding.todosIcon.setOnClickListener {
+            navigator().navigateToTodosScreen()
+        }
         binding.addNoteItemFab.setOnClickListener {
             navigator().navigateToCreateNoteScreen()
         }
-
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             android.widget.SearchView.OnQueryTextListener {
@@ -121,7 +102,6 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
                 binding.searchView.clearFocus()
                 if (query != null) {
                     val searchNotes = noteViewModel.sortedByInputTextListNotes(query)
-                    Log.i("Mytag", "onQueryTextSubmit $searchNotes")
                     adapter.setData(searchNotes)
                 }
                 return false
@@ -130,7 +110,6 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     val searchNotes = noteViewModel.sortedByInputTextListNotes(newText)
-                    Log.i("Mytag", "onQueryTextChange $searchNotes")
                     adapter.setData(searchNotes)
                 }
                 return false
