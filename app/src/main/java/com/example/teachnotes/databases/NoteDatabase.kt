@@ -23,6 +23,7 @@ abstract class NoteDatabase : RoomDatabase() {
                         NoteDatabase::class.java,
                         "note_data_database"
                     ).build()
+                    INSTANCE = instance
                 }
                 return instance
             }

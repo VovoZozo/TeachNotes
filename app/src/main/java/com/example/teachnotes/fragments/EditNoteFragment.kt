@@ -46,14 +46,4 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note) {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Add Note"
     }
 
-    override fun onDestroyView() {
-        parentFragmentManager
-            .beginTransaction()
-            .replace(R.id.notes_container, NotesListFragment(), null)
-            .commit()
-        super.onDestroyView()
-
-    }
-
-
 }

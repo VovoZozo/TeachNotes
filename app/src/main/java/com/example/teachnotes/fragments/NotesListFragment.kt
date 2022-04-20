@@ -2,9 +2,11 @@ package com.example.teachnotes.fragments
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -25,7 +27,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
 
     private lateinit var noteViewModel: NoteViewModel
     private lateinit var binding: FragmentNotesListBinding
-
+    private lateinit var adapter: NotesRecyclerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,12 +44,6 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.notes_menu_list, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-
     private fun updateNotes() {
         val dao = NoteDatabase.getInstance(requireContext()).noteDAO
         val repository = NoteRepository(dao)
@@ -56,6 +52,31 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         binding.myViewModel = noteViewModel
         binding.lifecycleOwner = this
         initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter = NotesRecyclerAdapter()
+        binding.recyclerView.adapter = adapter
+        displayNotesList()
+    }
+
+    private fun displayNotesList() {
+        noteViewModel.notes.observe(viewLifecycleOwner, Observer { list ->
+            adapter.setData(list)
+        })
+    }
+
+    private fun listItemClicked(note: Note) {
+        noteViewModel.initUpdateAndDelete(note)
+        Toast.makeText(
+            this.context, "selected title is ${note.noteTitle}", Toast.LENGTH_LONG
+        ).show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.notes_menu_list, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -68,33 +89,14 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun initRecyclerView() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        displayNotesList()
-    }
-
-    private fun displayNotesList() {
-        noteViewModel.notes.observe(viewLifecycleOwner, Observer { list ->
-            binding.recyclerView.adapter = NotesRecyclerAdapter(list) {
-                listItemClicked(it)
-            }
-        })
-    }
-
-    private fun listItemClicked(note: Note) {
-        Toast.makeText(
-            this.context, "selected title is ${note.noteTitle}", Toast.LENGTH_LONG
-        ).show()
-    }
-
-
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(itemView, savedInstanceState)
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Notes Recycler"
-        (requireActivity() as AppCompatActivity)
-            .supportActionBar?.setBackgroundDrawable(
+        (requireActivity() as AppCompatActivity).supportActionBar?.apply {
+            this.title = "Notes Recycler"
+            this.setBackgroundDrawable(
                 ColorDrawable(ContextCompat.getColor(requireContext(), R.color.black))
             )
+        }
         binding.todosIcon.setOnClickListener {
             parentFragmentManager
                 .beginTransaction()
@@ -108,37 +110,26 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         }
 
 
-//        val searchView = itemView.findViewById<SearchView>(R.id.searchView)
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                val searchView = itemView.findViewById<SearchView>(R.id.searchView)
-//                searchView.clearFocus()
-//                if (query != null) {
-//                    val searchNotes = list.filter {
-//                        it.noteTitle.lowercase().contains(query.lowercase())
-//                    }
-//                    if (searchNotes.isNotEmpty()) {
-//                        binding.recyclerView.adapter =
-//                            NotesRecyclerAdapter(searchNotes)
-//                    } else binding.recyclerView.adapter =
-//                        NotesRecyclerAdapter(NOTE_NOT_FOUND)
-//                }
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                if (newText != null) {
-//                    val searchNotes = notes.filter {
-//                        it.noteTitle.lowercase().contains(newText.lowercase())
-//                    }
-//                    if (searchNotes.isNotEmpty()) {
-//                        binding.recyclerView.adapter =
-//                            NotesRecyclerAdapter(searchNotes)
-//                    } else binding.recyclerView.adapter =
-//                        NotesRecyclerAdapter(NOTE_NOT_FOUND)
-//                }
-//                return false
-//            }
-//        })
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+            android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                binding.searchView.clearFocus()
+                if (query != null) {
+                    val searchNotes = noteViewModel.sortedByInputTextListNotes(query)
+                    Log.i("Mytag", "onQueryTextSubmit $searchNotes")
+                    adapter.setData(searchNotes)
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    val searchNotes = noteViewModel.sortedByInputTextListNotes(newText)
+                    Log.i("Mytag", "onQueryTextChange $searchNotes")
+                    adapter.setData(searchNotes)
+                }
+                return false
+            }
+        })
     }
 }

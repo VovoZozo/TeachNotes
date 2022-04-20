@@ -20,22 +20,4 @@ class NoteRepository(private val dao: NoteDAO) {
         dao.deleteAllNotes()
     }
 
-
-//    private val noteFaker = Faker()
-//    var notes = mutableListOf<Note>()
-//
-//    init {
-//        repeat(3) {
-//            addRandomNote()
-//        }
-//    }
-//
-//    private fun addRandomNote() {
-//        notes.add(createRandomNote())
-//    }
-//
-//    private fun createRandomNote() = Note(
-//        noteFaker.harryPotter().character(),
-//        noteFaker.harryPotter().quote()
-//    )
 }

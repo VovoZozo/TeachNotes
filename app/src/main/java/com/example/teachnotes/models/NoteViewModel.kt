@@ -33,6 +33,17 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
         clearAll()
     }
 
+    fun sortedByInputTextListNotes(query: String): List<Note> {
+        return if (notes.value == null) {
+            emptyList()
+        } else {
+            notes.value!!.filter {
+                it.noteTitle.lowercase().contains(query.lowercase())
+            }
+        }
+
+    }
+
     private fun insert(note: Note) {
         viewModelScope.launch {
             repository.insert(note)
