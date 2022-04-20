@@ -15,6 +15,9 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
     private var isUpdateOrDelete = false
     private lateinit var noteToUpdateOrDelete: Note
 
+    private val _checkedNotes: Set<Note> = emptySet()
+    var checkedNotes = _checkedNotes.toMutableSet()
+
     @Bindable
     val inputTitle = MutableLiveData<String?>()
 
@@ -43,6 +46,22 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
         }
     }
 
+    fun setCheckedNote(note: Note) {
+        checkedNotes.add(note)
+    }
+
+    fun deleteDeCheckedNote(note: Note) {
+        checkedNotes.remove(note)
+    }
+
+    fun isRecyclerViewCheckable(): Boolean {
+        return checkedNotes.isEmpty()
+    }
+
+    fun clearCheckedNotes() {
+        checkedNotes.clear()
+    }
+
     fun sortedByInputTextListNotes(query: String): List<Note> {
         return if (notes.value == null) {
             emptyList()
@@ -66,7 +85,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
         isUpdateOrDelete = false
     }
 
-    private fun delete(note: Note) = viewModelScope.launch {
+    fun delete(note: Note) = viewModelScope.launch {
         repository.delete(note)
         inputTitle.value = null
         inputText.value = null

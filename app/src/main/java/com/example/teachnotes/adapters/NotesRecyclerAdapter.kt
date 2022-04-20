@@ -11,7 +11,8 @@ import com.example.teachnotes.databases.Note
 import com.example.teachnotes.databinding.NoteCardViewBinding
 
 class NotesRecyclerAdapter(
-    private val clickListener: NoteClickListener
+    private val clickListener: NoteClickListener,
+    private val checkListener: NoteLongClickListener
 ) : ListAdapter<Note, NotesRecyclerAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -35,7 +36,25 @@ class NotesRecyclerAdapter(
             binding.root.setOnClickListener {
                 if (absoluteAdapterPosition != RecyclerView.NO_POSITION) {
                     val note = getItem(absoluteAdapterPosition)
-                    clickListener.onUserClicked(note)
+                    clickListener.onNoteClicked(note)
+                }
+            }
+            binding.cardNote.setOnLongClickListener {
+                if (binding.cardNote.isChecked) {
+                    binding.cardNote.isChecked = !binding.cardNote.isChecked
+                    if (absoluteAdapterPosition != RecyclerView.NO_POSITION) {
+                        val note = getItem(absoluteAdapterPosition)
+                        checkListener.onNoteDeChecked(note)
+                    }
+                    return@setOnLongClickListener true
+                }
+                if (absoluteAdapterPosition != RecyclerView.NO_POSITION) {
+                    val note = getItem(absoluteAdapterPosition)
+                    binding.cardNote.isChecked = !binding.cardNote.isChecked
+                    checkListener.onNoteChecked(note)
+                    true
+                } else {
+                    false
                 }
             }
         }
@@ -47,7 +66,12 @@ class NotesRecyclerAdapter(
     }
 
     interface NoteClickListener {
-        fun onUserClicked(note: Note)
+        fun onNoteClicked(note: Note)
+    }
+
+    interface NoteLongClickListener {
+        fun onNoteChecked(note: Note)
+        fun onNoteDeChecked(note: Note)
     }
 
     companion object {

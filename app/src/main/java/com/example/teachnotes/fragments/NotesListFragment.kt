@@ -2,7 +2,10 @@ package com.example.teachnotes.fragments
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -53,13 +56,28 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
     private fun initRecyclerView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = NotesRecyclerAdapter(object : NotesRecyclerAdapter.NoteClickListener {
-            override fun onUserClicked(note: Note) {
+            override fun onNoteClicked(note: Note) {
                 navigator().navigateToEditNoteScreen(note)
             }
-        })
+        },
+            object : NotesRecyclerAdapter.NoteLongClickListener {
+                override fun onNoteChecked(note: Note) {
+                    noteViewModel.setCheckedNote(note)
+                    changeMainBottomBarToSelectBar()
+                    Log.i("cc", "${noteViewModel.checkedNotes.size}")
+                }
+
+                override fun onNoteDeChecked(note: Note) {
+                    noteViewModel.deleteDeCheckedNote(note)
+                    if (noteViewModel.isRecyclerViewCheckable()) {
+                        changeSelectBarToMainBottomBar()
+                    }
+                }
+            })
         binding.recyclerView.adapter = adapter
         displayNotesList()
     }
+
 
     private fun displayNotesList() {
         noteViewModel.notes.observe(viewLifecycleOwner) { adapter.setData(it) }
@@ -72,12 +90,23 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_list_delete_all -> noteViewModel.clearAllOrDeleteNote()
+            R.id.menu_list_delete_all -> {
+                noteViewModel.clearAllOrDeleteNote()
+                noteViewModel.clearCheckedNotes()
+                changeSelectBarToMainBottomBar()
+            }
             R.id.menu_list_settings -> {
                 navigator().navigateToSettingsScreen()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroyView() {
+        if (!noteViewModel.isRecyclerViewCheckable()) {
+            noteViewModel.clearCheckedNotes()
+        }
+        super.onDestroyView()
     }
 
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
@@ -94,6 +123,11 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         }
         binding.addNoteItemFab.setOnClickListener {
             navigator().navigateToCreateNoteScreen()
+        }
+        binding.deleteSelectedIcon.setOnClickListener {
+            noteViewModel.checkedNotes.forEach { noteViewModel.delete(it) }
+            noteViewModel.clearCheckedNotes()
+            changeSelectBarToMainBottomBar()
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
@@ -115,5 +149,15 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
                 return false
             }
         })
+    }
+
+    fun changeMainBottomBarToSelectBar() {
+        binding.mainBottomToolbar.visibility = GONE
+        binding.selectNotesBottomToolbar.visibility = VISIBLE
+    }
+
+    fun changeSelectBarToMainBottomBar() {
+        binding.selectNotesBottomToolbar.visibility = GONE
+        binding.mainBottomToolbar.visibility = VISIBLE
     }
 }

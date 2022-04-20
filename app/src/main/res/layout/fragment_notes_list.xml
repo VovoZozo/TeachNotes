@@ -41,7 +41,7 @@
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="60dp"
                 tools:listitem="@layout/note_card_view" />
         </LinearLayout>
 
@@ -53,6 +53,7 @@
             android:background="@color/black"
             android:backgroundTint="@color/black"
             android:gravity="center"
+            android:visibility="visible"
             android:orientation="horizontal"
             android:padding="@dimen/toolbar_padding">
 
@@ -69,6 +70,34 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="75dp"
                 android:src="@drawable/ic_baseline_add_task_24" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/select_notes_bottom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/black"
+            android:backgroundTint="@color/black"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:padding="@dimen/toolbar_padding">
+
+            <ImageView
+                android:id="@+id/delete_selected_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="75dp"
+                android:src="@drawable/ic_baseline_delete_outline_24" />
+
+            <ImageView
+                android:id="@+id/select_all_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="75dp"
+                android:src="@drawable/ic_baseline_library_add_check_24" />
 
         </LinearLayout>
 

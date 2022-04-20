@@ -36,8 +36,7 @@ class TodosFragment : Fragment(R.layout.fragment_todos) {
         binding.todosRecyclerView.adapter = TodosRecyclerAdapter(todos)
 
         binding.notesIcon.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.notes_container, NotesListFragment()).commit()
+            navigator().navigateToNotesListScreenFromBackStack()
         }
     }
 }

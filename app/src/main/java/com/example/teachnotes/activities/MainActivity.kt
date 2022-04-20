@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.notes_container, NotesListFragment(), null)
+            .addToBackStack(null)
             .commit()
     }
 
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     override fun navigateToTodosScreen() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.notes_container, TodosFragment())
+            .replace(R.id.notes_container, TodosFragment(), null)
             .addToBackStack(null)
             .commit()
     }

@@ -15,48 +15,61 @@
         android:focusable="true"
         android:checkable="true"
         card_view:cardCornerRadius="15dp"
-        card_view:contentPadding="10dp">
+        card_view:contentPadding="5dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/previewNoteTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:background="@drawable/search_view_background"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:text="@string/noteTitle"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:gravity="start|center_vertical" />
+                android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/previewNoteTitle"
-            android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/previewNoteText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:maxLines="1"
+                android:layout_marginEnd="15dp"
+                android:maxLines="2"
                 android:gravity="start"
                 android:text="@string/previewNoteText" />
 
-        </LinearLayout>
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/note_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right" />
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/dateNoteText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_gravity="bottom"
+                android:gravity="center"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="11sp"
+                android:text="Note creation date" />
+
+
+        </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 </layout>
