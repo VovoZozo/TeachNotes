@@ -22,15 +22,26 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
     val inputText = MutableLiveData<String?>()
 
     fun saveOrUpdateNote() {
-        val title = inputTitle.value!!
-        val text = inputText.value!!
-        insert(Note(noteId = 0, title, text, false))
-        inputTitle.value = null
-        inputText.value = null
+        if (isUpdateOrDelete) {
+            noteToUpdateOrDelete.noteTitle = inputTitle.value!!
+            noteToUpdateOrDelete.noteText = inputText.value!!
+            update(noteToUpdateOrDelete)
+        } else {
+            val title = inputTitle.value!!
+            val text = inputText.value!!
+            insert(Note(noteId = 0, title, text, false))
+            inputTitle.value = null
+            inputText.value = null
+        }
     }
 
     fun clearAllOrDeleteNote() {
-        clearAll()
+        if (isUpdateOrDelete) {
+            delete(noteToUpdateOrDelete)
+        } else {
+            clearAll()
+        }
+
     }
 
     fun sortedByInputTextListNotes(query: String): List<Note> {
@@ -52,13 +63,19 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
 
     fun update(note: Note) = viewModelScope.launch {
         repository.update(note)
+        inputTitle.value = noteToUpdateOrDelete.noteTitle
+        inputText.value = null
+        isUpdateOrDelete = false
     }
 
     fun delete(note: Note) = viewModelScope.launch {
         repository.delete(note)
+        inputTitle.value = null
+        inputText.value = null
+        isUpdateOrDelete = false
     }
 
-    private fun clearAll() = viewModelScope.launch {
+    fun clearAll() = viewModelScope.launch {
         repository.deleteAllNotes()
     }
 
@@ -67,6 +84,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
         inputText.value = note.noteText
         isUpdateOrDelete = true
         noteToUpdateOrDelete = note
+
     }
 
 

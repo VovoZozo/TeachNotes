@@ -9,14 +9,14 @@ data class Note(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "note_id")
-    val noteId: Int,
+    var noteId: Int,
 
     @ColumnInfo(name = "note_title")
-    val noteTitle: String,
+    var noteTitle: String,
 
     @ColumnInfo(name = "note_text")
-    val noteText: String,
+    var noteText: String,
 
     @ColumnInfo(name = "note_is_favorite")
-    val isFavorite: Boolean
+    var isFavorite: Boolean
 )

@@ -1,13 +1,12 @@
 package com.example.teachnotes.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teachnotes.R
+import com.example.teachnotes.databases.Note
 import com.example.teachnotes.databinding.ActivityMainBinding
-import com.example.teachnotes.fragments.EditNoteFragment
-import com.example.teachnotes.fragments.Navigator
-import com.example.teachnotes.fragments.NotesListFragment
-import com.example.teachnotes.fragments.SettingsFragment
+import com.example.teachnotes.fragments.*
 
 class MainActivity : AppCompatActivity(), Navigator {
 
@@ -50,10 +49,24 @@ class MainActivity : AppCompatActivity(), Navigator {
         }
     }
 
-    override fun navigateToEditNoteScreen() {
+    override fun navigateToEditNoteScreen(note: Note) {
+        Log.i("Nav", note.toString())
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.notes_container, EditNoteFragment(), null)
+            .replace(
+                R.id.notes_container, EditNoteFragment.newInstance(
+                    note.noteText,
+                    note.noteTitle
+                ), "Edit note"
+            )
+            .addToBackStack("Edit note")
+            .commit()
+    }
+
+    override fun navigateToCreateNoteScreen() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.notes_container, CreateNoteFragment(), null)
             .addToBackStack(null)
             .commit()
     }

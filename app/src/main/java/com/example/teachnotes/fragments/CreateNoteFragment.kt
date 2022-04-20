@@ -11,15 +11,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.teachnotes.R
 import com.example.teachnotes.databases.NoteDatabase
 import com.example.teachnotes.databases.NoteRepository
-import com.example.teachnotes.databinding.FragmentEditNoteBinding
+import com.example.teachnotes.databinding.FragmentCreateNoteBinding
 import com.example.teachnotes.models.NoteViewModel
 import com.example.teachnotes.models.NoteViewModelFactory
 
-
-class EditNoteFragment : Fragment(R.layout.fragment_edit_note) {
+class CreateNoteFragment : Fragment(R.layout.fragment_edit_note) {
 
     private lateinit var noteViewModel: NoteViewModel
-    private lateinit var binding: FragmentEditNoteBinding
+    private lateinit var binding: FragmentCreateNoteBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,7 +27,7 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note) {
     ): View? {
         this.binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_edit_note,
+            R.layout.fragment_create_note,
             container, false
         )
         val dao = NoteDatabase.getInstance(requireActivity()).noteDAO
@@ -37,37 +36,13 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note) {
         noteViewModel = ViewModelProvider(this, factory)[NoteViewModel::class.java]
         binding.myViewModel = noteViewModel
         binding.lifecycleOwner = this
-
+        setHasOptionsMenu(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val text = arguments?.getString(ARGUMENT_TEXT) ?: "Unknown"
-        val title = arguments?.getString(ARGUMENT_TITLE) ?: "Unknown"
-
-        binding.noteTitle.setText(title)
-        binding.noteText.setText(text)
-        setHasOptionsMenu(true)
-
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Edit Note"
-    }
-
-    companion object {
-        private const val ARGUMENT_TITLE = "ARGUMENT_TITLE"
-        private const val ARGUMENT_TEXT = "ARGUMENT_TEXT"
-
-        fun newInstance(text: String, title: String): EditNoteFragment {
-            val args = Bundle().apply {
-                putString(ARGUMENT_TEXT, text)
-                putString(ARGUMENT_TITLE, title)
-            }
-
-            val fragment = EditNoteFragment()
-            fragment.arguments = args
-            return fragment
-        }
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Add Note"
     }
 
 }

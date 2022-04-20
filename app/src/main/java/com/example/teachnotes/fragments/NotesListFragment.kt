@@ -56,7 +56,12 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
 
     private fun initRecyclerView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = NotesRecyclerAdapter()
+        adapter = NotesRecyclerAdapter(object : NotesRecyclerAdapter.NoteClickListener {
+            override fun onUserClicked(note: Note) {
+                noteViewModel.initUpdateAndDelete(note)
+                navigator().navigateToEditNoteScreen(note)
+            }
+        })
         binding.recyclerView.adapter = adapter
         displayNotesList()
     }
@@ -106,7 +111,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         }
 
         binding.addNoteItemFab.setOnClickListener {
-            navigator().navigateToEditNoteScreen()
+            navigator().navigateToCreateNoteScreen()
         }
 
 
