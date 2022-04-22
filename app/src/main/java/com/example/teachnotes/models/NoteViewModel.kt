@@ -18,6 +18,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
     private val _checkedNotes: Set<Note> = emptySet()
     var checkedNotes = _checkedNotes.toMutableSet()
 
+
     @Bindable
     val inputTitle = MutableLiveData<String?>()
 
@@ -33,8 +34,6 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
             val title = inputTitle.value!!
             val text = inputText.value!!
             insert(Note(noteId = 0, title, text, false))
-            inputTitle.value = null
-            inputText.value = null
         }
     }
 

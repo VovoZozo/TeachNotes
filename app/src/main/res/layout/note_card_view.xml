@@ -50,11 +50,6 @@
                 android:gravity="start"
                 android:text="@string/previewNoteText" />
 
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/note_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right" />
 
             <TextView
                 android:id="@+id/dateNoteText"
@@ -67,7 +62,6 @@
                 android:singleLine="true"
                 android:textSize="11sp"
                 android:text="Note creation date" />
-
 
         </LinearLayout>
 
