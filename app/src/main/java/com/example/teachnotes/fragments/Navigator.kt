@@ -6,7 +6,7 @@ import com.example.teachnotes.databases.Note
 interface Navigator {
     fun navigateToEditNoteScreen(note: Note)
     fun navigateToCreateNoteScreen()
-    fun navigateToNotesListScreenFromBackStack()
+    fun navigateToNotesListScreen()
     fun navigateToSettingsScreen()
     fun navigateToTodosScreen()
 }

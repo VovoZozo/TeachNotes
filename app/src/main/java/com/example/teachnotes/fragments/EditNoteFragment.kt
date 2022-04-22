@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -48,7 +47,7 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note) {
         val text = arguments?.getString(ARGUMENT_TEXT) ?: "0"
         noteViewModel.initUpdateAndDelete(id, title, text)
         setHasOptionsMenu(true)
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Edit Note"
+//        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Edit Note"
     }
 
     companion object {

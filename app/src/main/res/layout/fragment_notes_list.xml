@@ -16,34 +16,12 @@
         android:layout_height="match_parent"
         tools:context=".fragments.NotesListFragment">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                android:queryHint="search note"
-                android:iconifiedByDefault="false"
-                android:queryBackground="@android:color/transparent"
-                android:background="@drawable/search_view_background"
-                app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="60dp"
-                tools:listitem="@layout/note_card_view" />
-        </LinearLayout>
+            android:layout_marginBottom="60dp"
+            tools:listitem="@layout/note_card_view" />
 
         <LinearLayout
             android:id="@+id/main_bottom_toolbar"

@@ -1,6 +1,5 @@
 package com.example.teachnotes.fragments
 
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -8,7 +7,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -112,10 +110,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(itemView, savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.apply {
-            this.title = getString(R.string.notes_list_fragment_toolbar_title)
-            this.setBackgroundDrawable(
-                ColorDrawable(ContextCompat.getColor(requireContext(), R.color.black))
-            )
+            this.title = null
         }
 
         binding.todosIcon.setOnClickListener {
@@ -130,10 +125,14 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
             changeSelectBarToMainBottomBar()
         }
 
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+        val searchNotesView = activity?.findViewById<SearchView>(R.id.searchView)
+        if (searchNotesView != null) {
+            searchNotesView.visibility = VISIBLE
+        }
+        searchNotesView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                binding.searchView.clearFocus()
+                searchNotesView.clearFocus()
                 if (query != null) {
                     val searchNotes = noteViewModel.sortedByInputTextListNotes(query)
                     adapter.setData(searchNotes)
