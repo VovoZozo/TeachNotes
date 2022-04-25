@@ -20,4 +20,8 @@ class NoteRepository(private val dao: NoteDAO) {
         dao.deleteAllNotes()
     }
 
+    suspend fun getNoteById(noteId: Int) {
+        dao.getSingleNote(noteId)
+    }
+
 }

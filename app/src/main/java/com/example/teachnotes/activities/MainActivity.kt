@@ -1,14 +1,16 @@
 package com.example.teachnotes.activities
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teachnotes.R
 import com.example.teachnotes.databases.Note
 import com.example.teachnotes.databinding.ActivityMainBinding
 import com.example.teachnotes.fragments.*
+import com.example.teachnotes.models.NoteViewModel
 
 class MainActivity : AppCompatActivity(), Navigator {
-
+    val noteModel: NoteViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     private val canNavigateUp: Boolean
         get() = supportFragmentManager.backStackEntryCount > 0
@@ -77,6 +79,10 @@ class MainActivity : AppCompatActivity(), Navigator {
             .beginTransaction()
             .replace(R.id.notes_container, TodosFragment(), null)
             .commit()
+    }
+
+    override fun navigateUp() {
+        onSupportNavigateUp()
     }
 
 }

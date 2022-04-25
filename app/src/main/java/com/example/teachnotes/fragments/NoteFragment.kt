@@ -28,7 +28,10 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
     private var noteId: Int = DEFAULT_NOTE_ID
     private var isNoteFavorite = false
     private var isNoteNew = true
-
+    private val isNoteEmpty
+        get(): Boolean {
+            return noteId == DEFAULT_NOTE_ID && noteText.isEmpty() && noteTitle.isEmpty()
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,29 +42,47 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             inflater,
             container, false
         )
-
         val dao = NoteDatabase.getInstance(requireActivity()).noteDAO
         val repository = NoteRepository(dao)
         val factory = NoteViewModelFactory(repository)
         noteViewModel = ViewModelProvider(this, factory)[NoteViewModel::class.java]
-        setHasOptionsMenu(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = null
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
 
         if (arguments != null) {
-            Log.i("dse", "$")
-            noteTitle = requireArguments().getString(ARGUMENT_TITLE).toString()
-            noteText = requireArguments().getString(ARGUMENT_TEXT).toString()
-            noteId = requireArguments().getInt(ARGUMENT_ID)
-            isNoteFavorite = requireArguments().getBoolean(ARGUMENT_IS_FAVORITE)
-            binding.noteTitle.setText(noteTitle)
-            binding.noteText.setText(noteText)
-            Log.i("dse", "$noteTitle + $noteText + $noteId + $isNoteFavorite")
+//            noteTitle = requireArguments().getString(ARGUMENT_TITLE).toString()
+//            noteText = requireArguments().getString(ARGUMENT_TEXT).toString()
+//            noteId = requireArguments().getInt(ARGUMENT_ID)
+//            isNoteFavorite = requireArguments().getBoolean(ARGUMENT_IS_FAVORITE)
+//            if (isNoteFavorite) {
+//                binding.noteFavorite.visibility = View.VISIBLE
+//            }
+            isNoteFavorite = noteViewModel.currentNote.value?.isFavorite ?: false
+            if (isNoteFavorite) {
+                binding.noteFavorite.visibility = View.VISIBLE
+            }
+            binding.noteTitle.setText(noteViewModel.currentNote.value?.noteTitle ?: "")
+            Log.d("rer", "${noteViewModel.currentNote.value}")
+            binding.noteText.setText(noteViewModel.currentNote.value?.noteText ?: "")
             isNoteNew = false
+        }
+
+        binding.isNoteFavorite.setOnClickListener {
+
+            isNoteFavorite = !isNoteFavorite
+            if (isNoteFavorite) {
+                binding.noteFavorite.visibility = View.VISIBLE
+            } else {
+                binding.noteFavorite.visibility = View.GONE
+            }
+        }
+
+        binding.navigateUpButton.setOnClickListener {
+            navigator().navigateUp()
         }
 
         binding.noteTitle.addTextChangedListener(object : TextWatcher {
@@ -74,7 +95,6 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
                         .show()
                 }
             }
-
             override fun afterTextChanged(s: Editable?) {
                 noteTitle = s.toString()
             }
@@ -91,41 +111,47 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             }
         })
         binding.saveNoteFab.setOnClickListener {
-            if (isNoteNew) {
-                noteViewModel.saveNote(noteTitle, noteText, isNoteFavorite)
-            } else {
-                noteViewModel.updateNote(noteId, noteTitle, noteText, isNoteFavorite)
-            }
             navigator().navigateToNotesListScreen()
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        if (isNoteNew) {
+    private fun saveNote() {
+        if (noteId == DEFAULT_NOTE_ID) {
             noteViewModel.saveNote(noteTitle, noteText, isNoteFavorite)
         } else {
             noteViewModel.updateNote(noteId, noteTitle, noteText, isNoteFavorite)
+        }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (!isNoteEmpty) {
+            saveNote()
+        } else {
+            Toast.makeText(requireContext(), DISCARD_NOTE_MESSAGE, Toast.LENGTH_SHORT).show()
         }
         _binding = null
     }
 
     companion object {
-        private const val TITLE_MAX_LENGTH_MESSAGE = "You enter to match characters"
-        private const val DEFAULT_NOTE_ID = 0
+        private const val DEFAULT_NOTE_ID = -1
         private const val EMPTY_TEXT = ""
+        private const val TITLE_MAX_LENGTH_MESSAGE = "You enter to match characters"
         private const val TITLE_MAX_LENGTH = 40
-
+        private const val DISCARD_NOTE_MESSAGE = "Discard empty note"
         private const val ARGUMENT_ID = "ARGUMENT_ID"
         private const val ARGUMENT_TITLE = "ARGUMENT_TITLE"
         private const val ARGUMENT_TEXT = "ARGUMENT_TEXT"
+        private const val ARGUMENT_IS_EDIT_NOTE = "ARGUMENT_IS_EDIT_NOTE"
         private const val ARGUMENT_IS_FAVORITE = "ARGUMENT_IS_FAVORITE"
         fun newInstance(note: Note): NoteFragment {
             val args = Bundle().apply {
-                putInt(ARGUMENT_ID, note.noteId)
-                putString(ARGUMENT_TITLE, note.noteTitle)
-                putString(ARGUMENT_TEXT, note.noteText)
-                putBoolean(ARGUMENT_IS_FAVORITE, note.isFavorite)
+//                putInt(ARGUMENT_ID, note.noteId)
+//                putString(ARGUMENT_TITLE, note.noteTitle)
+//                putString(ARGUMENT_TEXT, note.noteText)
+//                putBoolean(ARGUMENT_IS_FAVORITE, note.isFavorite)
+                putBoolean(ARGUMENT_IS_EDIT_NOTE, true)
             }
             val fragment = NoteFragment()
             fragment.arguments = args

@@ -1,5 +1,7 @@
 package com.example.teachnotes.models
 
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teachnotes.databases.Note
@@ -9,6 +11,7 @@ import kotlinx.coroutines.launch
 class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
     val notes = repository.notes
+    var currentNote: MutableLiveData<Note> = MutableLiveData()
 
     private lateinit var noteToUpdateOrDelete: Note
     fun setNoteToUpdateOrDelete(note: Note) {
@@ -28,11 +31,21 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
     }
 
     fun saveNote(title: String, text: String, isFavorite: Boolean = false) {
-        insert(Note(noteId = 0, title, text, false))
+        insert(Note(noteId = 0, title, text, isFavorite))
+    }
+
+    fun getSingleNote(noteId: Int) {
+        getSingleNote(noteId)
+    }
+
+    fun initCurrentNote(note: Note) {
+        currentNote.value = note
+        Log.d("rer", "$note")
     }
 
     fun updateNote(noteId: Int, title: String, text: String, isFavorite: Boolean = false) {
-        update(createNote(noteId, title, text, isFavorite))
+        var note = Note(noteId, title, text, isFavorite)
+        update(note)
     }
 
     fun sortedByInputTextListNotes(query: String): List<Note> {
@@ -63,4 +76,9 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
         repository.deleteAllNotes()
     }
 
+    companion object {
+        private const val DEFAULT_NOTE_ID = -1
+        private const val EMPTY_TEXT = ""
+        private val DEFAULT_NOTE = Note(DEFAULT_NOTE_ID, EMPTY_TEXT, EMPTY_TEXT, false)
+    }
 }

@@ -13,12 +13,62 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:iconifiedByDefault="false" />
+            android:orientation="horizontal">
+
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="40dp"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                android:layout_alignParentStart="true">-->
+
+            <!--                <ImageView-->
+            <!--                    android:id="@+id/navigate_up_button"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginStart="16dp"-->
+            <!--                    android:gravity="center"-->
+            <!--                    android:src="@drawable/ic_baseline_navigate_before_24"/>-->
+
+            <!--            </LinearLayout>-->
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:layout_alignParentEnd="true">
+
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:iconifiedByDefault="false" />
+
+                <CheckBox
+                    android:id="@+id/grid_check_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:button="@drawable/grid_check_box" />
+
+                <ImageView
+                    android:id="@+id/menu_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:gravity="center"
+                    android:src="@drawable/ic_baseline_menu_open_24" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
@@ -27,55 +77,8 @@
             android:layout_marginBottom="10dp"
             android:visibility="visible"
             tools:listitem="@layout/note_card_view" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/create_note_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-
-        <EditText
-            android:id="@+id/create_note_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="note Title" />
-
-        <EditText
-            android:id="@+id/create_note_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="note Text" />
-
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/edit_note_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/edit_note_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="note Title" />
-
-        <EditText
-            android:id="@+id/edit_note_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="note Text" />
-    </LinearLayout>
-
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

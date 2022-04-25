@@ -9,6 +9,7 @@ interface Navigator {
     fun navigateToEditNoteScreen(note: Note)
     fun navigateToCreateNoteScreen()
     fun navigateToTodosScreen()
+    fun navigateUp()
 }
 
 fun Fragment.navigator(): Navigator = (requireActivity() as Navigator)
