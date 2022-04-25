@@ -1,64 +1,38 @@
 package com.example.teachnotes.models
 
-import androidx.databinding.Bindable
-import androidx.databinding.Observable
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teachnotes.databases.Note
 import com.example.teachnotes.databases.NoteRepository
 import kotlinx.coroutines.launch
 
-class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Observable {
+class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
     val notes = repository.notes
-    private var isUpdateOrDelete = false
+
     private lateinit var noteToUpdateOrDelete: Note
-
-    private val _checkedNotes: Set<Note> = emptySet()
-    var checkedNotes = _checkedNotes.toMutableSet()
-
-
-    @Bindable
-    val inputTitle = MutableLiveData<String?>()
-
-    @Bindable
-    val inputText = MutableLiveData<String?>()
-
-    fun saveOrUpdateNote() {
-        if (isUpdateOrDelete) {
-            noteToUpdateOrDelete.noteTitle = inputTitle.value!!
-            noteToUpdateOrDelete.noteText = inputText.value!!
-            update(noteToUpdateOrDelete)
-        } else {
-            val title = inputTitle.value!!
-            val text = inputText.value!!
-            insert(Note(noteId = 0, title, text, false))
-        }
+    fun setNoteToUpdateOrDelete(note: Note) {
+        noteToUpdateOrDelete = note
     }
 
-    fun clearAllOrDeleteNote() {
-        if (isUpdateOrDelete) {
-            delete(noteToUpdateOrDelete)
-        } else {
-            clearAll()
-        }
+    fun getNoteToUpdateOrDelete(): Note = noteToUpdateOrDelete
+    private var positionForUpdateOrDelete: Int = -1
+    fun setPositionForUpdateOrDelete(position: Int) {
+        positionForUpdateOrDelete = position
     }
 
-    fun setCheckedNote(note: Note) {
-        checkedNotes.add(note)
+    fun getPositionForUpdateOrDelete(): Int = positionForUpdateOrDelete
+
+    fun createNote(id: Int, title: String, text: String, isFavorite: Boolean = false): Note {
+        return Note(id, title, text, isFavorite)
     }
 
-    fun deleteDeCheckedNote(note: Note) {
-        checkedNotes.remove(note)
+    fun saveNote(title: String, text: String, isFavorite: Boolean = false) {
+        insert(Note(noteId = 0, title, text, false))
     }
 
-    fun isRecyclerViewCheckable(): Boolean {
-        return checkedNotes.isEmpty()
-    }
-
-    fun clearCheckedNotes() {
-        checkedNotes.clear()
+    fun updateNote(noteId: Int, title: String, text: String, isFavorite: Boolean = false) {
+        update(createNote(noteId, title, text, isFavorite))
     }
 
     fun sortedByInputTextListNotes(query: String): List<Note> {
@@ -71,43 +45,22 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
         }
     }
 
-    private fun insert(note: Note) {
+    fun insert(note: Note) {
         viewModelScope.launch {
             repository.insert(note)
         }
     }
 
-    private fun update(note: Note) = viewModelScope.launch {
+    fun update(note: Note) = viewModelScope.launch {
         repository.update(note)
-        inputTitle.value = noteToUpdateOrDelete.noteTitle
-        inputText.value = noteToUpdateOrDelete.noteText
-        isUpdateOrDelete = false
     }
 
     fun delete(note: Note) = viewModelScope.launch {
         repository.delete(note)
-        inputTitle.value = null
-        inputText.value = null
-        isUpdateOrDelete = false
     }
 
-    private fun clearAll() = viewModelScope.launch {
+    fun clearAll() = viewModelScope.launch {
         repository.deleteAllNotes()
     }
 
-    fun initUpdateAndDelete(id: Int, title: String, text: String) {
-        inputTitle.value = title
-        inputText.value = text
-        isUpdateOrDelete = true
-        noteToUpdateOrDelete = Note(id, title, text, false)
-    }
-
-
-    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
-
-    }
-
-    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
-
-    }
 }

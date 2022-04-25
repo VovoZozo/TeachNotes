@@ -1,100 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.NotesListFragment">
 
-    <data>
-
-        <variable
-            name="myViewModel"
-            type="com.example.teachnotes.models.NoteViewModel" />
-    </data>
-
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/notes_list_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragments.NotesListFragment">
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:iconifiedByDefault="false" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="60dp"
-            tools:listitem="@layout/note_card_view" />
-
-        <LinearLayout
-            android:id="@+id/main_bottom_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/black"
-            android:backgroundTint="@color/black"
-            android:gravity="center"
+            android:layout_marginBottom="10dp"
             android:visibility="visible"
-            android:orientation="horizontal"
-            android:padding="@dimen/toolbar_padding">
+            tools:listitem="@layout/note_card_view" />
+    </LinearLayout>
 
-            <ImageView
-                android:id="@+id/notes_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="75dp"
-                android:src="@drawable/ic_baseline_note_add_24" />
+    <LinearLayout
+        android:id="@+id/create_note_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/todos_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="75dp"
-                android:src="@drawable/ic_baseline_add_task_24" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/select_notes_bottom_toolbar"
+        <EditText
+            android:id="@+id/create_note_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/black"
-            android:backgroundTint="@color/black"
-            android:gravity="center"
-            android:visibility="gone"
-            android:orientation="horizontal"
-            android:padding="@dimen/toolbar_padding">
+            android:layout_margin="16dp"
+            android:hint="note Title" />
 
-            <ImageView
-                android:id="@+id/delete_selected_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="75dp"
-                android:src="@drawable/ic_baseline_delete_outline_24" />
-
-            <ImageView
-                android:id="@+id/select_all_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="75dp"
-                android:src="@drawable/ic_baseline_library_add_check_24" />
-
-        </LinearLayout>
-
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <EditText
+            android:id="@+id/create_note_text"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="note Text" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/add_note_item_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="75dp"
-                android:contentDescription="@string/add_new_note"
-                app:srcCompat="@drawable/ic_baseline_add_circle_outline_24" />
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </LinearLayout>
 
-    </FrameLayout>
-</layout>
+    <LinearLayout
+        android:id="@+id/edit_note_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit_note_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="note Title" />
+
+        <EditText
+            android:id="@+id/edit_note_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="note Text" />
+    </LinearLayout>
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_note_item_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:contentDescription="@string/add_new_note"
+            app:srcCompat="@drawable/ic_baseline_add_circle_outline_24" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</RelativeLayout>
+
 

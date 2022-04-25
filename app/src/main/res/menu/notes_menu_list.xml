@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
 
     <item
         android:title="Delete All"
-        android:id="@+id/menu_list_delete_all"></item>
+        android:id="@+id/menu_list_delete_all" />
 
     <item
         android:title="Settings"
-        android:id="@+id/menu_list_settings"></item>
+        android:id="@+id/menu_list_settings" />
+
+    <item
+        android:title="Grid Enable"
+        android:id="@+id/enable_grid"
+        android:icon="@drawable/ic_baseline_grid_on_24"
+        app:showAsAction="ifRoom" />
+    <item
+        android:title="Grid Disable"
+        android:id="@+id/disable_grid"
+        android:icon="@drawable/ic_baseline_grid_off_24"
+        app:showAsAction="ifRoom" />
 
 </menu>

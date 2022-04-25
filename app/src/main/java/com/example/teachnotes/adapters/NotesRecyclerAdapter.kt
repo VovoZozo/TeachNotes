@@ -36,7 +36,7 @@ class NotesRecyclerAdapter(
             binding.root.setOnClickListener {
                 if (absoluteAdapterPosition != RecyclerView.NO_POSITION) {
                     val note = getItem(absoluteAdapterPosition)
-                    clickListener.onNoteClicked(note)
+                    clickListener.onNoteClicked(note, absoluteAdapterPosition)
                 }
             }
             binding.cardNote.setOnLongClickListener {
@@ -66,7 +66,7 @@ class NotesRecyclerAdapter(
     }
 
     interface NoteClickListener {
-        fun onNoteClicked(note: Note)
+        fun onNoteClicked(note: Note, position: Int)
     }
 
     interface NoteLongClickListener {

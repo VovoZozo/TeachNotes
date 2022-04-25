@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".activities.MainActivity">
 
@@ -13,25 +12,12 @@
         android:layout_height="40dp"
         android:background="@drawable/toolbar_background_border">
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:queryHint="search note"
-            android:iconifiedByDefault="false"
-            android:queryBackground="?android:attr/colorPrimary"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
-
-
     </com.google.android.material.appbar.MaterialToolbar>
-
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/notes_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
     </androidx.fragment.app.FragmentContainerView>
-
 
 </LinearLayout>

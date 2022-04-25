@@ -4,10 +4,10 @@ import androidx.fragment.app.Fragment
 import com.example.teachnotes.databases.Note
 
 interface Navigator {
-    fun navigateToEditNoteScreen(note: Note)
-    fun navigateToCreateNoteScreen()
     fun navigateToNotesListScreen()
     fun navigateToSettingsScreen()
+    fun navigateToEditNoteScreen(note: Note)
+    fun navigateToCreateNoteScreen()
     fun navigateToTodosScreen()
 }
 

@@ -1,15 +1,14 @@
 package com.example.teachnotes.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teachnotes.R
 import com.example.teachnotes.adapters.NotesRecyclerAdapter
@@ -22,8 +21,10 @@ import com.example.teachnotes.models.NoteViewModelFactory
 
 class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
 
+    private lateinit var prefs: SharedPreferences
     private lateinit var noteViewModel: NoteViewModel
-    private lateinit var binding: FragmentNotesListBinding
+    private var _binding: FragmentNotesListBinding? = null
+    private val binding get() = _binding!!
     private lateinit var adapter: NotesRecyclerAdapter
 
     override fun onCreateView(
@@ -31,14 +32,16 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        this.binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_notes_list,
-            container, false
-        )
+        _binding = FragmentNotesListBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
+        prefs = requireContext().getSharedPreferences("TeachNotesSettings", Context.MODE_PRIVATE)
         updateNotes()
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adapter.notifyDataSetChanged()
     }
 
     private fun updateNotes() {
@@ -46,31 +49,20 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         val repository = NoteRepository(dao)
         val factory = NoteViewModelFactory(repository)
         noteViewModel = ViewModelProvider(this, factory)[NoteViewModel::class.java]
-        binding.myViewModel = noteViewModel
-        binding.lifecycleOwner = this
         initRecyclerView()
     }
 
+
     private fun initRecyclerView() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        setInitLayoutManager()
         adapter = NotesRecyclerAdapter(object : NotesRecyclerAdapter.NoteClickListener {
-            override fun onNoteClicked(note: Note) {
+            override fun onNoteClicked(note: Note, position: Int) {
                 navigator().navigateToEditNoteScreen(note)
             }
         },
             object : NotesRecyclerAdapter.NoteLongClickListener {
-                override fun onNoteChecked(note: Note) {
-                    noteViewModel.setCheckedNote(note)
-                    changeMainBottomBarToSelectBar()
-                    Log.i("cc", "${noteViewModel.checkedNotes.size}")
-                }
-
-                override fun onNoteDeChecked(note: Note) {
-                    noteViewModel.deleteDeCheckedNote(note)
-                    if (noteViewModel.isRecyclerViewCheckable()) {
-                        changeSelectBarToMainBottomBar()
-                    }
-                }
+                override fun onNoteChecked(note: Note) {}
+                override fun onNoteDeChecked(note: Note) {}
             })
         binding.recyclerView.adapter = adapter
         displayNotesList()
@@ -86,25 +78,34 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_list_delete_all -> {
-                noteViewModel.clearAllOrDeleteNote()
-                noteViewModel.clearCheckedNotes()
-                changeSelectBarToMainBottomBar()
+                noteViewModel.clearAll()
             }
             R.id.menu_list_settings -> {
                 navigator().navigateToSettingsScreen()
+            }
+            R.id.enable_grid -> {
+                binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+                prefs.edit().putBoolean(APP_PREFERENCES_IS_GRID_ENABLE, true).apply()
+            }
+            R.id.disable_grid -> {
+                binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                prefs.edit().putBoolean(APP_PREFERENCES_IS_GRID_ENABLE, false).apply()
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDestroyView() {
-        if (!noteViewModel.isRecyclerViewCheckable()) {
-            noteViewModel.clearCheckedNotes()
+    private fun setInitLayoutManager() {
+        if (prefs.getBoolean(APP_PREFERENCES_IS_GRID_ENABLE, false)) {
+            binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        } else {
+            binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         }
-        super.onDestroyView()
     }
 
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
@@ -113,26 +114,15 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
             this.title = null
         }
 
-        binding.todosIcon.setOnClickListener {
-            navigator().navigateToTodosScreen()
-        }
         binding.addNoteItemFab.setOnClickListener {
             navigator().navigateToCreateNoteScreen()
         }
-        binding.deleteSelectedIcon.setOnClickListener {
-            noteViewModel.checkedNotes.forEach { noteViewModel.delete(it) }
-            noteViewModel.clearCheckedNotes()
-            changeSelectBarToMainBottomBar()
-        }
 
-        val searchNotesView = activity?.findViewById<SearchView>(R.id.searchView)
-        if (searchNotesView != null) {
-            searchNotesView.visibility = VISIBLE
-        }
-        searchNotesView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                searchNotesView.clearFocus()
+                binding.searchView.clearFocus()
                 if (query != null) {
                     val searchNotes = noteViewModel.sortedByInputTextListNotes(query)
                     adapter.setData(searchNotes)
@@ -150,13 +140,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         })
     }
 
-    fun changeMainBottomBarToSelectBar() {
-        binding.mainBottomToolbar.visibility = GONE
-        binding.selectNotesBottomToolbar.visibility = VISIBLE
-    }
-
-    fun changeSelectBarToMainBottomBar() {
-        binding.selectNotesBottomToolbar.visibility = GONE
-        binding.mainBottomToolbar.visibility = VISIBLE
+    companion object {
+        private const val APP_PREFERENCES_IS_GRID_ENABLE = "APP_PREFERENCES_IS_GRID_ENABLE"
     }
 }

@@ -9,4 +9,6 @@
     <string name="add_new_todo" />
     <string name="save_new_note">save_new_note</string>
     <string name="notes_list_fragment_toolbar_title">Notes Recycler</string>
+    <string name="note_title_hint">note Title</string>
+    <string name="note_text_hint">note Text</string>
 </resources>
