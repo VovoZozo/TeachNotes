@@ -3,35 +3,23 @@ package com.example.teachnotes.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.example.teachnotes.R
 import com.example.teachnotes.databases.Note
-import com.example.teachnotes.databases.NoteDatabase
-import com.example.teachnotes.databases.NoteRepository
 import com.example.teachnotes.databinding.FragmentNoteBinding
 import com.example.teachnotes.models.NoteViewModel
-import com.example.teachnotes.models.NoteViewModelFactory
 
 class NoteFragment : Fragment(R.layout.fragment_note) {
-    private lateinit var noteViewModel: NoteViewModel
+
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
-    private var noteTitle: String = EMPTY_TEXT
-    private var noteText: String = EMPTY_TEXT
-    private var noteId: Int = DEFAULT_NOTE_ID
-    private var isNoteFavorite = false
-    private var isNoteNew = true
-    private val isNoteEmpty
-        get(): Boolean {
-            return noteId == DEFAULT_NOTE_ID && noteText.isEmpty() && noteTitle.isEmpty()
-        }
+    private val noteViewModel: NoteViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,10 +30,6 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             inflater,
             container, false
         )
-        val dao = NoteDatabase.getInstance(requireActivity()).noteDAO
-        val repository = NoteRepository(dao)
-        val factory = NoteViewModelFactory(repository)
-        noteViewModel = ViewModelProvider(this, factory)[NoteViewModel::class.java]
         return binding.root
     }
 
@@ -54,31 +38,21 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
 
         if (arguments != null) {
-//            noteTitle = requireArguments().getString(ARGUMENT_TITLE).toString()
-//            noteText = requireArguments().getString(ARGUMENT_TEXT).toString()
-//            noteId = requireArguments().getInt(ARGUMENT_ID)
-//            isNoteFavorite = requireArguments().getBoolean(ARGUMENT_IS_FAVORITE)
-//            if (isNoteFavorite) {
-//                binding.noteFavorite.visibility = View.VISIBLE
-//            }
-            isNoteFavorite = noteViewModel.currentNote.value?.isFavorite ?: false
-            if (isNoteFavorite) {
-                binding.noteFavorite.visibility = View.VISIBLE
+            arguments?.getParcelable<Note>(ARGUMENT_EDITED_NOTE)?.let {
+                noteViewModel.initEditedNote(it)
             }
-            binding.noteTitle.setText(noteViewModel.currentNote.value?.noteTitle ?: "")
-            Log.d("rer", "${noteViewModel.currentNote.value}")
-            binding.noteText.setText(noteViewModel.currentNote.value?.noteText ?: "")
-            isNoteNew = false
+            binding.apply {
+                noteTitle.setText(noteViewModel.editedNote.noteTitle)
+                noteText.setText(noteViewModel.editedNote.noteText)
+            }
+            checkFavoriteState()
+        } else {
+            noteViewModel.initEditedNote(DEFAULT_NOTE)
         }
 
         binding.isNoteFavorite.setOnClickListener {
-
-            isNoteFavorite = !isNoteFavorite
-            if (isNoteFavorite) {
-                binding.noteFavorite.visibility = View.VISIBLE
-            } else {
-                binding.noteFavorite.visibility = View.GONE
-            }
+            noteViewModel.changeFavoriteState()
+            checkFavoriteState()
         }
 
         binding.navigateUpButton.setOnClickListener {
@@ -95,8 +69,9 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
                         .show()
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {
-                noteTitle = s.toString()
+                noteViewModel.editedNote.noteTitle = s.toString()
             }
         })
         binding.noteText.addTextChangedListener(object : TextWatcher {
@@ -104,10 +79,14 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (count >= TITLE_MAX_LENGTH) {
+                    Toast.makeText(requireContext(), TITLE_MAX_LENGTH_MESSAGE, Toast.LENGTH_LONG)
+                        .show()
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
-                noteText = s.toString()
+                noteViewModel.editedNote.noteText = s.toString()
             }
         })
         binding.saveNoteFab.setOnClickListener {
@@ -115,43 +94,31 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
         }
     }
 
-    private fun saveNote() {
-        if (noteId == DEFAULT_NOTE_ID) {
-            noteViewModel.saveNote(noteTitle, noteText, isNoteFavorite)
-        } else {
-            noteViewModel.updateNote(noteId, noteTitle, noteText, isNoteFavorite)
-        }
-    }
-
-
     override fun onDestroyView() {
         super.onDestroyView()
-        if (!isNoteEmpty) {
-            saveNote()
-        } else {
-            Toast.makeText(requireContext(), DISCARD_NOTE_MESSAGE, Toast.LENGTH_SHORT).show()
-        }
+        noteViewModel.saveNote()
         _binding = null
     }
 
+    private fun checkFavoriteState() {
+        if (noteViewModel.editedNote.isFavorite) {
+            binding.noteFavorite.visibility = View.VISIBLE
+        } else {
+            binding.noteFavorite.visibility = View.GONE
+        }
+    }
+
     companion object {
-        private const val DEFAULT_NOTE_ID = -1
+        private const val DEFAULT_NOTE_ID = 0
         private const val EMPTY_TEXT = ""
+        private val DEFAULT_NOTE = Note(DEFAULT_NOTE_ID, EMPTY_TEXT, EMPTY_TEXT, false)
         private const val TITLE_MAX_LENGTH_MESSAGE = "You enter to match characters"
         private const val TITLE_MAX_LENGTH = 40
         private const val DISCARD_NOTE_MESSAGE = "Discard empty note"
-        private const val ARGUMENT_ID = "ARGUMENT_ID"
-        private const val ARGUMENT_TITLE = "ARGUMENT_TITLE"
-        private const val ARGUMENT_TEXT = "ARGUMENT_TEXT"
-        private const val ARGUMENT_IS_EDIT_NOTE = "ARGUMENT_IS_EDIT_NOTE"
-        private const val ARGUMENT_IS_FAVORITE = "ARGUMENT_IS_FAVORITE"
-        fun newInstance(note: Note): NoteFragment {
+        private const val ARGUMENT_EDITED_NOTE = "ARGUMENT_EDITED_NOTE"
+        fun newInstance(note: Note?): NoteFragment {
             val args = Bundle().apply {
-//                putInt(ARGUMENT_ID, note.noteId)
-//                putString(ARGUMENT_TITLE, note.noteTitle)
-//                putString(ARGUMENT_TEXT, note.noteText)
-//                putBoolean(ARGUMENT_IS_FAVORITE, note.isFavorite)
-                putBoolean(ARGUMENT_IS_EDIT_NOTE, true)
+                putParcelable(ARGUMENT_EDITED_NOTE, note)
             }
             val fragment = NoteFragment()
             fragment.arguments = args

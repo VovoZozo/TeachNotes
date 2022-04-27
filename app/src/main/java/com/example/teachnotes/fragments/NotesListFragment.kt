@@ -10,22 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teachnotes.R
 import com.example.teachnotes.adapters.NotesRecyclerAdapter
 import com.example.teachnotes.databases.Note
-import com.example.teachnotes.databases.NoteDatabase
-import com.example.teachnotes.databases.NoteRepository
 import com.example.teachnotes.databinding.FragmentNotesListBinding
 import com.example.teachnotes.models.NoteViewModel
-import com.example.teachnotes.models.NoteViewModelFactory
 
 class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
 
     private lateinit var prefs: SharedPreferences
-    private lateinit var noteViewModel: NoteViewModel
+    private val noteViewModel: NoteViewModel by activityViewModels()
     private var _binding: FragmentNotesListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: NotesRecyclerAdapter
@@ -42,10 +39,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
     }
 
     private fun updateNotes() {
-        val dao = NoteDatabase.getInstance(requireContext()).noteDAO
-        val repository = NoteRepository(dao)
-        val factory = NoteViewModelFactory(repository)
-        noteViewModel = ViewModelProvider(this, factory)[NoteViewModel::class.java]
+
         initRecyclerView()
     }
 
@@ -53,7 +47,6 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         setInitLayoutManager()
         adapter = NotesRecyclerAdapter(object : NotesRecyclerAdapter.NoteClickListener {
             override fun onNoteClicked(note: Note, position: Int) {
-                noteViewModel.initCurrentNote(note)
                 navigator().navigateToEditNoteScreen(note)
             }
         },

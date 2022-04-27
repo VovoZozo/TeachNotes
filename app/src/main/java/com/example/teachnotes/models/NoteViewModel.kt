@@ -1,7 +1,5 @@
 package com.example.teachnotes.models
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teachnotes.databases.Note
@@ -11,41 +9,23 @@ import kotlinx.coroutines.launch
 class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
     val notes = repository.notes
-    var currentNote: MutableLiveData<Note> = MutableLiveData()
+    var editedNote: Note = DEFAULT_NOTE
 
-    private lateinit var noteToUpdateOrDelete: Note
-    fun setNoteToUpdateOrDelete(note: Note) {
-        noteToUpdateOrDelete = note
+    fun saveNote() {
+        if (editedNote.noteId != DEFAULT_NOTE.noteId) {
+            update(editedNote)
+        } else {
+            insert(editedNote)
+        }
+        editedNote = DEFAULT_NOTE
     }
 
-    fun getNoteToUpdateOrDelete(): Note = noteToUpdateOrDelete
-    private var positionForUpdateOrDelete: Int = -1
-    fun setPositionForUpdateOrDelete(position: Int) {
-        positionForUpdateOrDelete = position
+    fun changeFavoriteState() {
+        editedNote.isFavorite = !editedNote.isFavorite
     }
 
-    fun getPositionForUpdateOrDelete(): Int = positionForUpdateOrDelete
-
-    fun createNote(id: Int, title: String, text: String, isFavorite: Boolean = false): Note {
-        return Note(id, title, text, isFavorite)
-    }
-
-    fun saveNote(title: String, text: String, isFavorite: Boolean = false) {
-        insert(Note(noteId = 0, title, text, isFavorite))
-    }
-
-    fun getSingleNote(noteId: Int) {
-        getSingleNote(noteId)
-    }
-
-    fun initCurrentNote(note: Note) {
-        currentNote.value = note
-        Log.d("rer", "$note")
-    }
-
-    fun updateNote(noteId: Int, title: String, text: String, isFavorite: Boolean = false) {
-        var note = Note(noteId, title, text, isFavorite)
-        update(note)
+    fun initEditedNote(note: Note) {
+        editedNote = notes.value?.find { it.noteId == note.noteId } ?: DEFAULT_NOTE
     }
 
     fun sortedByInputTextListNotes(query: String): List<Note> {
@@ -77,8 +57,40 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
     }
 
     companion object {
-        private const val DEFAULT_NOTE_ID = -1
+        private const val DEFAULT_NOTE_ID = 0
         private const val EMPTY_TEXT = ""
         private val DEFAULT_NOTE = Note(DEFAULT_NOTE_ID, EMPTY_TEXT, EMPTY_TEXT, false)
     }
 }
+
+
+//    private lateinit var noteToUpdateOrDelete: Note
+
+
+//    fun setNoteToUpdateOrDelete(note: Note) {
+//        noteToUpdateOrDelete = note
+//    }
+//
+//    fun getNoteToUpdateOrDelete(): Note = noteToUpdateOrDelete
+//    private var positionForUpdateOrDelete: Int = -1
+//    fun setPositionForUpdateOrDelete(position: Int) {
+//        positionForUpdateOrDelete = position
+//    }
+//
+//    fun getPositionForUpdateOrDelete(): Int = positionForUpdateOrDelete
+//
+//    fun createNote(id: Int, title: String, text: String, isFavorite: Boolean = false): Note {
+//        return Note(id, title, text, isFavorite)
+//    }
+//
+
+
+//    fun updateNote(noteId: Int, title: String, text: String, isFavorite: Boolean = false) {
+//        var note = Note(noteId, title, text, isFavorite)
+//        update(note)
+//    }
+
+
+//    fun getSingleNote(noteId: Int) {
+//        getSingleNote(noteId)
+//    }

@@ -1,9 +1,11 @@
 package com.example.teachnotes.databases
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.Serializable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "notes_data_table")
 data class Note(
 
@@ -19,4 +21,4 @@ data class Note(
 
     @ColumnInfo(name = "note_is_favorite")
     var isFavorite: Boolean
-) : Serializable
+) : Parcelable

@@ -1,16 +1,19 @@
 package com.example.teachnotes.activities
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.teachnotes.R
 import com.example.teachnotes.databases.Note
+import com.example.teachnotes.databases.NoteDatabase
+import com.example.teachnotes.databases.NoteRepository
 import com.example.teachnotes.databinding.ActivityMainBinding
 import com.example.teachnotes.fragments.*
 import com.example.teachnotes.models.NoteViewModel
+import com.example.teachnotes.models.NoteViewModelFactory
 
 class MainActivity : AppCompatActivity(), Navigator {
-    val noteModel: NoteViewModel by viewModels()
+    private lateinit var noteModel: NoteViewModel
     private lateinit var binding: ActivityMainBinding
     private val canNavigateUp: Boolean
         get() = supportFragmentManager.backStackEntryCount > 0
@@ -18,6 +21,10 @@ class MainActivity : AppCompatActivity(), Navigator {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val dao = NoteDatabase.getInstance(this).noteDAO
+        val repository = NoteRepository(dao)
+        val factory = NoteViewModelFactory(repository)
+        noteModel = ViewModelProvider(this, factory)[NoteViewModel::class.java]
         binding = ActivityMainBinding.inflate(layoutInflater)
 
 

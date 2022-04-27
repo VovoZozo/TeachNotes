@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.teachnotes.databases.NoteRepository
 
 
-class NoteViewModelFactory(private val repository: NoteRepository) : ViewModelProvider.Factory {
+class NoteViewModelFactory(
+    private val repository: NoteRepository
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NoteViewModel::class.java)) {
             return NoteViewModel(repository) as T
