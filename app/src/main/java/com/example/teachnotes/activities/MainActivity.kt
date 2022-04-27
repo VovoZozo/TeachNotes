@@ -66,6 +66,8 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun navigateToCreateNoteScreen() {
+        noteModel.resetEditedNote()
+
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.notes_container, NoteFragment(), null)

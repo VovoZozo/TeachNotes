@@ -11,13 +11,16 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
     val notes = repository.notes
     var editedNote: Note = DEFAULT_NOTE
 
+    fun resetEditedNote() {
+        editedNote = DEFAULT_NOTE
+    }
+
     fun saveNote() {
         if (editedNote.noteId != DEFAULT_NOTE.noteId) {
             update(editedNote)
         } else {
             insert(editedNote)
         }
-        editedNote = DEFAULT_NOTE
     }
 
     fun changeFavoriteState() {
@@ -25,7 +28,9 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
     }
 
     fun initEditedNote(note: Note) {
-        editedNote = notes.value?.find { it.noteId == note.noteId } ?: DEFAULT_NOTE
+        if(editedNote.noteId == DEFAULT_NOTE.noteId) {
+            editedNote = notes.value?.find { it.noteId == note.noteId } ?: DEFAULT_NOTE
+        }
     }
 
     fun sortedByInputTextListNotes(query: String): List<Note> {
@@ -40,7 +45,8 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
     fun insert(note: Note) {
         viewModelScope.launch {
-            repository.insert(note)
+            val id = repository.insert(note)
+            editedNote = editedNote.copy(noteId = id.toInt())
         }
     }
 
