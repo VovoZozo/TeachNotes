@@ -9,4 +9,8 @@
         android:id="@+id/menu_list_settings"
         android:title="Settings" />
 
+    <item
+        android:id="@+id/menu_list_sort"
+        android:title="Sort" />
+
 </menu>

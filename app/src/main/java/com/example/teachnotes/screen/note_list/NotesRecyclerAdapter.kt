@@ -1,4 +1,4 @@
-package com.example.teachnotes.adapters
+package com.example.teachnotes.screen.note_list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

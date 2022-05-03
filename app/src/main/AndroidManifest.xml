@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TeachNotes">
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

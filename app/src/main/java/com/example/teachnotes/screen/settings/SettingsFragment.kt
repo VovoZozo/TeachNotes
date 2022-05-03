@@ -1,4 +1,4 @@
-package com.example.teachnotes.fragments
+package com.example.teachnotes.screen.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -1,19 +1,14 @@
-package com.example.teachnotes.activities
+package com.example.teachnotes
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.example.teachnotes.R
-import com.example.teachnotes.databases.Note
-import com.example.teachnotes.databases.NoteDatabase
-import com.example.teachnotes.databases.NoteRepository
 import com.example.teachnotes.databinding.ActivityMainBinding
-import com.example.teachnotes.fragments.*
-import com.example.teachnotes.models.NoteViewModel
-import com.example.teachnotes.models.NoteViewModelFactory
+import com.example.teachnotes.screen.note_create.CreateNoteFragment
+import com.example.teachnotes.screen.note_edit.EditNoteFragment
+import com.example.teachnotes.screen.note_list.NotesListFragment
+import com.example.teachnotes.screen.settings.SettingsFragment
 
 class MainActivity : AppCompatActivity(), Navigator {
-    private lateinit var noteModel: NoteViewModel
     private lateinit var binding: ActivityMainBinding
     private val canNavigateUp: Boolean
         get() = supportFragmentManager.backStackEntryCount > 0
@@ -21,10 +16,6 @@ class MainActivity : AppCompatActivity(), Navigator {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val dao = NoteDatabase.getInstance(this).noteDAO
-        val repository = NoteRepository(dao)
-        val factory = NoteViewModelFactory(repository)
-        noteModel = ViewModelProvider(this, factory)[NoteViewModel::class.java]
         binding = ActivityMainBinding.inflate(layoutInflater)
 
 
@@ -52,7 +43,6 @@ class MainActivity : AppCompatActivity(), Navigator {
         }
     }
 
-
     override fun navigateToNotesListScreen() {
         onSupportNavigateUp()
     }
@@ -66,27 +56,18 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun navigateToCreateNoteScreen() {
-        noteModel.resetEditedNote()
-
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.notes_container, NoteFragment(), null)
+            .replace(R.id.notes_container, CreateNoteFragment(), null)
             .addToBackStack(null)
             .commit()
     }
 
-    override fun navigateToEditNoteScreen(note: Note) {
+    override fun navigateToEditNoteScreen(noteId: Long) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.notes_container, NoteFragment.newInstance(note), null)
+            .replace(R.id.notes_container, EditNoteFragment.newInstance(noteId), null)
             .addToBackStack(null)
-            .commit()
-    }
-
-    override fun navigateToTodosScreen() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.notes_container, TodosFragment(), null)
             .commit()
     }
 

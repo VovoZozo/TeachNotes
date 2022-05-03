@@ -11,7 +11,7 @@ data class Note(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "note_id")
-    var noteId: Int,
+    var noteId: Long,
 
     @ColumnInfo(name = "note_title")
     var noteTitle: String,
@@ -21,4 +21,5 @@ data class Note(
 
     @ColumnInfo(name = "note_is_favorite")
     var isFavorite: Boolean
+
 ) : Parcelable

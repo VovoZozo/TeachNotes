@@ -1,4 +1,4 @@
-package com.example.teachnotes.fragments
+package com.example.teachnotes.screen.note_list
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -10,19 +10,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.teachnotes.AppExecutors
 import com.example.teachnotes.R
-import com.example.teachnotes.adapters.NotesRecyclerAdapter
 import com.example.teachnotes.databases.Note
+import com.example.teachnotes.databases.NoteDatabase
 import com.example.teachnotes.databinding.FragmentNotesListBinding
-import com.example.teachnotes.models.NoteViewModel
+import com.example.teachnotes.navigator
+import com.example.teachnotes.repository.NotesListRepository
 
 class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
 
     private lateinit var prefs: SharedPreferences
-    private val noteViewModel: NoteViewModel by activityViewModels()
+    private lateinit var noteViewModel: NotesListViewModel
     private var _binding: FragmentNotesListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: NotesRecyclerAdapter
@@ -34,22 +36,26 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
     ): View {
         _binding = FragmentNotesListBinding.inflate(inflater, container, false)
         prefs = requireContext().getSharedPreferences("TeachNotesSettings", Context.MODE_PRIVATE)
-        updateNotes()
+        initViewModel()
+        initRecyclerView()
         return binding.root
     }
 
-    private fun updateNotes() {
-
-        initRecyclerView()
+    private fun initViewModel() {
+        val dao = NoteDatabase.getInstance(requireContext()).noteDAO
+        val repository = NotesListRepository(dao, AppExecutors.ioExecutor)
+        val factory = NotesListViewModelFactory(repository)
+        noteViewModel = ViewModelProvider(this, factory)[NotesListViewModel::class.java]
     }
 
     private fun initRecyclerView() {
         setInitLayoutManager()
-        adapter = NotesRecyclerAdapter(object : NotesRecyclerAdapter.NoteClickListener {
-            override fun onNoteClicked(note: Note, position: Int) {
-                navigator().navigateToEditNoteScreen(note)
-            }
-        },
+        adapter = NotesRecyclerAdapter(
+            object : NotesRecyclerAdapter.NoteClickListener {
+                override fun onNoteClicked(note: Note, position: Int) {
+                    navigator().navigateToEditNoteScreen(note.noteId)
+                }
+            },
             object : NotesRecyclerAdapter.NoteLongClickListener {
                 override fun onNoteChecked(note: Note) {}
                 override fun onNoteDeChecked(note: Note) {}
@@ -71,12 +77,13 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         }
     }
 
-
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(itemView, savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
 
+
         val gridCheckBox = binding.gridCheckBox
+        gridCheckBox.isChecked = prefs.getBoolean(APP_PREFERENCES_IS_GRID_ENABLE, false)
         gridCheckBox.setOnClickListener {
             if (gridCheckBox.isChecked) {
                 binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -91,7 +98,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         }
 
         binding.menuButton.setOnClickListener {
-            var popup = PopupMenu(requireContext(), binding.menuButton)
+            val popup = PopupMenu(requireContext(), binding.menuButton)
             popup.inflate(R.menu.notes_menu_list)
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -100,6 +107,9 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
                     }
                     R.id.menu_list_settings -> {
                         navigator().navigateToSettingsScreen()
+                    }
+                    R.id.menu_list_sort -> {
+                        TODO()
                     }
                 }
                 return@setOnMenuItemClickListener true
@@ -126,6 +136,11 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
                 return false
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     companion object {
