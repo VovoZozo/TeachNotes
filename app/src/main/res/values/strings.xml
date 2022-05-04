@@ -11,4 +11,8 @@
     <string name="notes_list_fragment_toolbar_title">Notes Recycler</string>
     <string name="note_title_hint">note Title</string>
     <string name="note_text_hint">note Text</string>
+    <string name="notes_delete_all">Delete All</string>
+    <string name="settings_menu">Settings</string>
+    <string name="sort_date_created_menu">Sort date created</string>
+    <string name="sort_date_edited_menu">Sort date edited</string>
 </resources>

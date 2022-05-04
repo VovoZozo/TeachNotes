@@ -21,13 +21,13 @@ class CreateNoteFragment : Fragment(R.layout.fragment_create_note) {
 
     private var _binding: FragmentEditNoteBinding? = null
     private val binding get() = _binding!!
-    private lateinit var noteViewModel: CreateNoteViewModel
+    private lateinit var viewModel: CreateNoteViewModel
 
     private fun initViewModel() {
         val dao = NoteDatabase.getInstance(requireContext()).noteDAO
         val repository = NoteRepository(dao, AppExecutors.ioExecutor)
         val factory = CreateNoteViewModelFactory(repository)
-        noteViewModel = ViewModelProvider(this, factory)[CreateNoteViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[CreateNoteViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -50,18 +50,27 @@ class CreateNoteFragment : Fragment(R.layout.fragment_create_note) {
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 saveNote()
-                navigator().navigateToNotesListScreen()
+                navigator().goBack()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
+        binding.isNoteFavorite.setOnClickListener {
+            viewModel.onIsNoteFavoriteClick()
+            if (viewModel.isNoteFavorite) {
+                binding.noteFavorite.visibility = View.VISIBLE
+            } else {
+                binding.noteFavorite.visibility = View.GONE
+            }
+        }
+
         binding.saveNoteFab.setOnClickListener {
             saveNote()
-            navigator().navigateToNotesListScreen()
+            navigator().goBack()
         }
         binding.navigateUpButton.setOnClickListener {
             saveNote()
-            navigator().navigateUp()
+            navigator().goBack()
         }
     }
 
@@ -72,7 +81,7 @@ class CreateNoteFragment : Fragment(R.layout.fragment_create_note) {
                     .show()
                 return
             } else {
-                noteViewModel.saveNote(
+                viewModel.saveNote(
                     noteTitle.text.toString(),
                     noteText.text.toString()
                 )

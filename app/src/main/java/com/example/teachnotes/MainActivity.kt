@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         }
     }
 
-    override fun navigateToNotesListScreen() {
+    override fun goBack() {
         onSupportNavigateUp()
     }
 
@@ -69,10 +69,6 @@ class MainActivity : AppCompatActivity(), Navigator {
             .replace(R.id.notes_container, EditNoteFragment.newInstance(noteId), null)
             .addToBackStack(null)
             .commit()
-    }
-
-    override fun navigateUp() {
-        onSupportNavigateUp()
     }
 
 }

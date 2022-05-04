@@ -18,13 +18,13 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note) {
 
     private var _binding: FragmentEditNoteBinding? = null
     private val binding get() = _binding!!
-    private lateinit var noteViewModel: EditNoteViewModel
+    private lateinit var viewModel: EditNoteViewModel
 
     private fun initViewModel(noteId: Long) {
         val dao = NoteDatabase.getInstance(requireContext()).noteDAO
         val repository = NoteRepository(dao, AppExecutors.ioExecutor)
         val factory = EditNoteViewModelFactory(noteId, repository)
-        noteViewModel = ViewModelProvider(this, factory)[EditNoteViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[EditNoteViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -46,25 +46,37 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note) {
         val noteId = arguments?.getLong(ARGUMENT_NOTE_ID) ?: DEFAULT_NOTE_ID
         initViewModel(noteId)
 
-        noteViewModel.currentNote.observe(viewLifecycleOwner) {
+        viewModel.currentNote.observe(viewLifecycleOwner) {
             binding.noteTitle.setText(it.noteTitle)
             binding.noteText.setText(it.noteText)
+            if (it.isFavorite) {
+                binding.noteFavorite.visibility = View.VISIBLE
+            }
+        }
+
+        binding.isNoteFavorite.setOnClickListener {
+            viewModel.onIsNoteFavoriteClick()
+            if (viewModel.currentNote.value?.isFavorite == true) {
+                binding.noteFavorite.visibility = View.VISIBLE
+            } else {
+                binding.noteFavorite.visibility = View.GONE
+            }
         }
 
         binding.navigateUpButton.setOnClickListener {
-            navigator().navigateUp()
+            navigator().goBack()
         }
 
         binding.saveNoteFab.setOnClickListener {
-            navigator().navigateToNotesListScreen()
+            navigator().goBack()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        noteViewModel.currentNote.value?.noteTitle = binding.noteTitle.text.toString()
-        noteViewModel.currentNote.value?.noteText = binding.noteText.text.toString()
-        noteViewModel.updateNote()
+        viewModel.currentNote.value?.noteTitle = binding.noteTitle.text.toString()
+        viewModel.currentNote.value?.noteText = binding.noteText.text.toString()
+        viewModel.updateNote()
         _binding = null
     }
 

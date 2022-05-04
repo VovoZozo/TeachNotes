@@ -14,19 +14,36 @@
         android:clickable="true"
         android:focusable="true"
         android:checkable="true"
-        card_view:cardCornerRadius="15dp"
+        card_view:cardCornerRadius="25dp"
         card_view:contentPadding="5dp">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginEnd="16dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/note_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:src="@drawable/ic_baseline_favorite_24" />
+
+        </FrameLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+
             <TextView
                 android:id="@+id/previewNoteTitle"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:background="@drawable/search_view_background"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:maxLines="1"

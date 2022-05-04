@@ -1,6 +1,7 @@
 package com.example.teachnotes.screen.note_list
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
@@ -60,8 +61,14 @@ class NotesRecyclerAdapter(
         }
 
         fun bind(note: Note) {
-            binding.previewNoteTitle.text = note.noteTitle
-            binding.previewNoteText.text = note.noteText
+            binding.apply {
+                previewNoteTitle.text = note.noteTitle
+                previewNoteText.text = note.noteText
+                dateNoteText.text = note.dateCreate
+                if (note.isFavorite) {
+                    noteFavorite.visibility = View.VISIBLE
+                }
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
@@ -19,12 +20,13 @@ import com.example.teachnotes.databases.Note
 import com.example.teachnotes.databases.NoteDatabase
 import com.example.teachnotes.databinding.FragmentNotesListBinding
 import com.example.teachnotes.navigator
+import com.example.teachnotes.repository.NoteSortOrder
 import com.example.teachnotes.repository.NotesListRepository
 
 class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
 
     private lateinit var prefs: SharedPreferences
-    private lateinit var noteViewModel: NotesListViewModel
+    private lateinit var viewModel: NotesListViewModel
     private var _binding: FragmentNotesListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: NotesRecyclerAdapter
@@ -45,7 +47,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
         val dao = NoteDatabase.getInstance(requireContext()).noteDAO
         val repository = NotesListRepository(dao, AppExecutors.ioExecutor)
         val factory = NotesListViewModelFactory(repository)
-        noteViewModel = ViewModelProvider(this, factory)[NotesListViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[NotesListViewModel::class.java]
     }
 
     private fun initRecyclerView() {
@@ -65,7 +67,7 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
     }
 
     private fun displayNotesList() {
-        noteViewModel.notes.observe(viewLifecycleOwner) { adapter.setData(it) }
+        viewModel.notes.observe(viewLifecycleOwner) { adapter.setData(it) }
     }
 
     private fun setInitLayoutManager() {
@@ -103,13 +105,16 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_list_delete_all -> {
-                        noteViewModel.clearAll()
+                        viewModel.onRemoveAllClicked()
                     }
                     R.id.menu_list_settings -> {
                         navigator().navigateToSettingsScreen()
                     }
-                    R.id.menu_list_sort -> {
-                        TODO()
+                    R.id.menu_list_sort_date_created -> {
+                        viewModel.setSortOrder(NoteSortOrder.CREATED_DATE)
+                    }
+                    R.id.menu_list_sort_date_edited -> {
+                        viewModel.setSortOrder(NoteSortOrder.CHANGED_DATE)
                     }
                 }
                 return@setOnMenuItemClickListener true
@@ -117,22 +122,21 @@ class NotesListFragment : Fragment(R.layout.fragment_notes_list) {
             popup.show()
         }
 
+        viewModel.showListEmptyMessageErrorEvent.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            }
+        }
+
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                binding.searchView.clearFocus()
-                if (query != null) {
-                    val searchNotes = noteViewModel.sortedByInputTextListNotes(query)
-                    adapter.setData(searchNotes)
-                }
+                viewModel.onSearchQueryChanged(query.toString())
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    val searchNotes = noteViewModel.sortedByInputTextListNotes(newText)
-                    adapter.setData(searchNotes)
-                }
+                viewModel.onSearchQueryChanged(newText.toString())
                 return false
             }
         })

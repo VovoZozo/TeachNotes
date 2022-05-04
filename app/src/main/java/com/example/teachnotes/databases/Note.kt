@@ -20,6 +20,12 @@ data class Note(
     var noteText: String,
 
     @ColumnInfo(name = "note_is_favorite")
-    var isFavorite: Boolean
+    var isFavorite: Boolean,
+
+    @ColumnInfo(name = "note_date_create")
+    var dateCreate: String,
+
+    @ColumnInfo(name = "note_date_change")
+    var dateChange: String
 
 ) : Parcelable
